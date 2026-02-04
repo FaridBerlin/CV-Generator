@@ -4,12 +4,12 @@ const autofilledState = {
     info: [
       {
         name: "firstName",
-        value: "Nikola",
+        value: "Farid",
         id: uuidv4()
       },
       {
         name: "lastName",
-        value: "Tesla",
+        value: "Berlin",
         id: uuidv4()
       },
       {
