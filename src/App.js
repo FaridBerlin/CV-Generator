@@ -1,225 +1,473 @@
 import React, { useState } from 'react';
 import Form from './containers/form/form.js';
 import Preview from './containers/preview/preview.js';
-import styles from './App.module.css';
 import { v4 as uuidv4 } from 'uuid';
-import autofilledState from './utils/autofill.js';
 import MobileToggle from './components/MobileToggle/MobileToggle.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-// Initialize info state with unique IDs
-const initializeInfo = () => [
-  { name: "firstName", value: "", id: uuidv4() },
-  { name: "lastName", value: "", id: uuidv4() },
-  { name: "address", value: "", id: uuidv4() },
-  { name: "website", value: "", id: uuidv4() },
-  { name: "email", value: "", id: uuidv4() },
-  { name: "phone", value: "", id: uuidv4() },
-  { name: "bio", value: "", id: uuidv4() },
-  { name: "universityName", value: "", id: uuidv4() },
-  { name: "universityDegree", value: "", id: uuidv4() },
-  { name: "universityDate", value: "", id: uuidv4() },
-  { name: "schoolName", value: "", id: uuidv4() },
-  { name: "schoolDegree", value: "", id: uuidv4() },
-  { name: "schoolDate", value: "", id: uuidv4() }
+// Initialize personal info state
+const initializePersonalInfo = () => ({
+  firstName: '',
+  lastName: '',
+  title: '',
+  bio: '',
+  email: '',
+  phone: '',
+  address: '',
+  github: '',
+  profileImage: null,
+});
+
+// Initialize education entries
+const initializeEducation = () => [
+  {
+    id: uuidv4(),
+    degree: '',
+    institution: '',
+    startDate: '',
+    endDate: '',
+    location: '',
+    courses: [],
+  },
 ];
 
+// Initialize projects
+const initializeProjects = () => [
+  {
+    id: uuidv4(),
+    name: '',
+    stack: '',
+    features: [],
+    role: '',
+    deployment: '',
+    liveUrl: '',
+  },
+];
+
+// Initialize languages
+const initializeLanguages = () => [{ id: uuidv4(), language: '', level: '' }];
+
+// Initialize interests
+const initializeInterests = () => [{ id: uuidv4(), interest: '' }];
+
 function App() {
-  // State for all of the user's personal and educational information
-  const [info, setInfo] = useState(initializeInfo());
+  // Personal information state
+  const [personalInfo, setPersonalInfo] = useState(initializePersonalInfo());
 
-  // State Array to hold Objects resembling work experience of the user
+  // Education state
+  const [education, setEducation] = useState(initializeEducation());
+
+  // Professional experience state
   const [experience, setExperience] = useState([
-    { 
-      isHovered: false,
+    {
       id: uuidv4(),
-      company: "",
-      position: "",
-      task: "",
-      start: "",
-      end: ""
-    }
+      position: '',
+      company: '',
+      startDate: '',
+      endDate: '',
+      location: '',
+      achievements: [],
+    },
   ]);
 
-  // State Array to hold Objects resembling skills of the user
-  const [skills, setSkills] = useState([
-    { isHovered: false, id: uuidv4(), skill: "" },
-    { isHovered: false, id: uuidv4(), skill: "" },
-    { isHovered: false, id: uuidv4(), skill: "" }
-  ]);
+  // Skills state
+  const [skills, setSkills] = useState([{ id: uuidv4(), skill: '' }]);
 
-  // Object to hold a boolean value, determining if the form (or the preview, if formIsOpen: false) is supposed to be rendered in mobile view.
+  // Personal projects state
+  const [projects, setProjects] = useState(initializeProjects());
+
+  // Languages state
+  const [languages, setLanguages] = useState(initializeLanguages());
+
+  // Interests state
+  const [interests, setInterests] = useState(initializeInterests());
+
+  // Mobile view toggle state
   const [mobile, setMobile] = useState({ formIsOpen: true });
 
-  // Toggling between the "form" and "preview" in mobile view
+  // Toggling between form and preview in mobile view
   const handleToggle = () => {
-    setMobile(prev => ({ formIsOpen: !prev.formIsOpen }));
+    setMobile((prev) => ({ formIsOpen: !prev.formIsOpen }));
   };
 
-  // Adding a work object to the experience state array
-  const addWork = (e) => {
+  // Handle personal info changes
+  const handlePersonalInfoChange = (e) => {
+    const { name, value } = e.target;
+    setPersonalInfo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPersonalInfo((prev) => ({ ...prev, profileImage: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Education handlers
+  const addEducation = (e) => {
     e.preventDefault();
-    setExperience(prev => [...prev, {
-      isHovered: false,
-      id: uuidv4(),
-      company: "",
-      position: "",
-      task: "",
-      start: "",
-      end: ""
-    }]);
+    setEducation((prev) => [
+      ...prev,
+      {
+        id: uuidv4(),
+        degree: '',
+        institution: '',
+        startDate: '',
+        endDate: '',
+        location: '',
+        courses: [],
+      },
+    ]);
   };
 
-  // Adding a skill object to the skills state array
+  const removeEducation = (id) => {
+    setEducation((prev) => prev.filter((edu) => edu.id !== id));
+  };
+
+  const handleEducationChange = (id, field, value) => {
+    setEducation((prev) => prev.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)));
+  };
+
+  // Experience handlers
+  const addExperience = (e) => {
+    e.preventDefault();
+    setExperience((prev) => [
+      ...prev,
+      {
+        id: uuidv4(),
+        position: '',
+        company: '',
+        startDate: '',
+        endDate: '',
+        location: '',
+        achievements: [],
+      },
+    ]);
+  };
+
+  const removeExperience = (id) => {
+    setExperience((prev) => prev.filter((exp) => exp.id !== id));
+  };
+
+  const handleExperienceChange = (id, field, value) => {
+    setExperience((prev) => prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)));
+  };
+
+  // Skills handlers
   const addSkill = (e) => {
     e.preventDefault();
-    setSkills(prev => [...prev, {
-      isHovered: false,
-      id: uuidv4(),
-      skill: ""
-    }]);
+    setSkills((prev) => [...prev, { id: uuidv4(), skill: '' }]);
   };
 
-  // Removing a work object from the experience state array
-  const removeWork = (index) => {
-    setExperience(prev => prev.filter((_, i) => i !== index));
+  const removeSkill = (id) => {
+    setSkills((prev) => prev.filter((skill) => skill.id !== id));
   };
 
-  // Removing a skill object from the skills state array
-  const removeSkill = (index) => {
-    setSkills(prev => prev.filter((_, i) => i !== index));
+  const handleSkillChange = (id, value) => {
+    setSkills((prev) =>
+      prev.map((skill) => (skill.id === id ? { ...skill, skill: value } : skill))
+    );
   };
 
-  // Recolouring SVGs (with the "fill:" property) on hover
-  const handleMouse = (e) => {
-    const targetId = e.target.id;
-    setExperience(prev => prev.map(work => 
-      work.id === targetId 
-        ? { ...work, isHovered: !work.isHovered }
-        : work
-    ));
+  // Projects handlers
+  const addProject = (e) => {
+    e.preventDefault();
+    setProjects((prev) => [
+      ...prev,
+      {
+        id: uuidv4(),
+        name: '',
+        stack: '',
+        features: [],
+        role: '',
+        deployment: '',
+        liveUrl: '',
+      },
+    ]);
   };
 
-  // Recolouring SVGs (with the "fill:" property) on hover
-  const handleMouseSkills = (e) => {
-    const targetId = e.target.id;
-    setSkills(prev => prev.map(skill =>
-      skill.id === targetId
-        ? { ...skill, isHovered: !skill.isHovered }
-        : skill
-    ));
+  const removeProject = (id) => {
+    setProjects((prev) => prev.filter((project) => project.id !== id));
   };
 
-  // Handling edits for input fields that control the experience state
-  const handleWorkChange = (e) => {
-    const { id, name, value } = e.target;
-    setExperience(prev => prev.map(work =>
-      work.id === id
-        ? { ...work, [name]: value }
-        : work
-    ));
+  const handleProjectChange = (id, field, value) => {
+    setProjects((prev) =>
+      prev.map((project) => (project.id === id ? { ...project, [field]: value } : project))
+    );
   };
 
-  // Handling edits for input fields that control the skills state
-  const handleSkillChange = (e) => {
-    const { id, name, value } = e.target;
-    setSkills(prev => prev.map(skill =>
-      skill.id === id
-        ? { ...skill, [name]: value }
-        : skill
-    ));
+  // Languages handlers
+  const addLanguage = (e) => {
+    e.preventDefault();
+    setLanguages((prev) => [...prev, { id: uuidv4(), language: '', level: '' }]);
   };
 
-  // Handling edits for input fields that control info state
-  const handleInfoChange = (e) => {
-    const { name, value } = e.target;
-    setInfo(prev => prev.map(information =>
-      information.name === name
-        ? { ...information, value }
-        : information
-    ));
+  const removeLanguage = (id) => {
+    setLanguages((prev) => prev.filter((lang) => lang.id !== id));
   };
 
-  // Changing values of all keys in the state that keep user data, automatically rendering an autofilled CV
+  const handleLanguageChange = (id, field, value) => {
+    setLanguages((prev) =>
+      prev.map((lang) => (lang.id === id ? { ...lang, [field]: value } : lang))
+    );
+  };
+
+  // Interests handlers
+  const addInterest = (e) => {
+    e.preventDefault();
+    setInterests((prev) => [...prev, { id: uuidv4(), interest: '' }]);
+  };
+
+  const removeInterest = (id) => {
+    setInterests((prev) => prev.filter((int) => int.id !== id));
+  };
+
+  const handleInterestChange = (id, value) => {
+    setInterests((prev) => prev.map((int) => (int.id === id ? { ...int, interest: value } : int)));
+  };
+
+  // Autofill functionality with sample data
   const autoFill = () => {
-    setInfo(autofilledState.info);
-    setExperience(autofilledState.experience);
-    setSkills(autofilledState.skills);
+    setPersonalInfo({
+      firstName: 'Farid',
+      lastName: 'Hima',
+      title: 'Junior Full Stack Web Developer',
+      bio: 'Motivated Junior Full Stack Developer with hands-on experience in MERN stack technologies and a strong background in e-commerce operations. Passionate about building scalable, user-focused web applications and exploring automation and AI tools. Seeking a collaborative development environment where I can grow and contribute to innovative projects.',
+      email: 'bughunterf@gmail.com',
+      phone: '01767976666',
+      address: '12045, Berlin, Germany',
+      github: 'github.com/FaridBerlin',
+      profileImage: null,
+    });
+
+    setEducation([
+      {
+        id: uuidv4(),
+        degree: 'Full Stack Web Development',
+        institution: 'DCI Digital Career Institute GmbH',
+        startDate: '10/2024',
+        endDate: 'Present',
+        location: 'Berlin',
+        courses: [
+          'Comprehensive training in MERN Stack (MongoDB, Express.js, React, Node.js)',
+          'Development of multiple real-world projects focusing on React, Node.js, and REST API creation',
+          'Participation in English language improvement courses',
+          'Introduction to AI automation and AI agent creation',
+        ],
+      },
+    ]);
+
+    setExperience([
+      {
+        id: uuidv4(),
+        position: 'Amazon FBA Manager',
+        company: 'IIIHT, Berlin',
+        startDate: '10/2021',
+        endDate: '02/2024',
+        location: 'Berlin',
+        achievements: [
+          'Managed and optimized Amazon FBA listings and ad campaigns for tech products',
+          'Conducted market research and competitor analysis to enhance sales performance',
+          'Monitored stock levels, logistics, and product traceability to ensure smooth operations',
+          'Developed data-driven approaches to improve ROI and streamline workflows',
+        ],
+      },
+      {
+        id: uuidv4(),
+        position: 'Personal Trainer / Influencer',
+        company: 'Berlin',
+        startDate: '06/2011',
+        endDate: '12/2022',
+        location: '',
+        achievements: [
+          'Managed online content and fitness programs, building a YouTube channel with 180K subscribers',
+          'Sponsored by Olimp Sport Nutrition (2013-2020)',
+          'Winner of IFBB Fit Model Belgium (2019)',
+          'Certified EMS IHHA Personal Trainer',
+          '*(Experience showcases leadership, self-motivation, and digital marketing skills)*',
+        ],
+      },
+    ]);
+
+    setSkills([
+      { id: uuidv4(), skill: 'JavaScript' },
+      { id: uuidv4(), skill: 'TypeScript' },
+      { id: uuidv4(), skill: 'React' },
+      { id: uuidv4(), skill: 'Python' },
+      { id: uuidv4(), skill: 'Flask' },
+      { id: uuidv4(), skill: 'Docker' },
+      { id: uuidv4(), skill: 'Node.js' },
+      { id: uuidv4(), skill: 'Express.js' },
+      { id: uuidv4(), skill: 'MongoDB' },
+      { id: uuidv4(), skill: 'MySQL' },
+      { id: uuidv4(), skill: 'PHP' },
+      { id: uuidv4(), skill: 'React Native' },
+      { id: uuidv4(), skill: 'Tailwind CSS' },
+      { id: uuidv4(), skill: 'Git' },
+      { id: uuidv4(), skill: 'GitHub' },
+      { id: uuidv4(), skill: 'Clerk' },
+      { id: uuidv4(), skill: 'API Development' },
+      { id: uuidv4(), skill: 'Postman' },
+      { id: uuidv4(), skill: 'AI Automation' },
+      { id: uuidv4(), skill: 'Zapier' },
+      { id: uuidv4(), skill: 'n8n' },
+      { id: uuidv4(), skill: 'Astro' },
+      { id: uuidv4(), skill: 'HTML' },
+      { id: uuidv4(), skill: 'CSS' },
+      { id: uuidv4(), skill: 'YAML' },
+      { id: uuidv4(), skill: 'MJML' },
+    ]);
+
+    setProjects([
+      {
+        id: uuidv4(),
+        name: 'NutriVa – AI-powered nutrition app',
+        stack: 'MERN (MongoDB, Express, React 19, Node.js), Ollama AI, Tailwind CSS',
+        features: [
+          'Features: AI weekly planning, macro tracking, progress dashboard',
+          'Role: Project lead (4-person team), Deployment: Hetzner Cloud VPS',
+          'Live: nutriva.live',
+        ],
+        role: 'Project lead (4-person team)',
+        deployment: 'Hetzner Cloud VPS',
+        liveUrl: 'nutriva.live',
+      },
+      {
+        id: uuidv4(),
+        name: 'Weather Flask & Docker',
+        stack: 'Python, Flask, Docker & Docker Compose, HTML, CSS',
+        features: ['Features: Real-time weather data, API requests OpenWeatherMap'],
+        role: '',
+        deployment: '',
+        liveUrl: '',
+      },
+      {
+        id: uuidv4(),
+        name: 'Portfolio Website',
+        stack: 'React, Tailwind CSS, Vite, React Three Fiber',
+        features: ['Deployment: GitHub Pages'],
+        role: '',
+        deployment: 'GitHub Pages',
+        liveUrl: '',
+      },
+      {
+        id: uuidv4(),
+        name: 'Space Invader Game',
+        stack: 'Classic arcade-style game built with JavaScript and Canvas',
+        features: ['focusing on animation and game logic', 'Deployment: GitHub Pages'],
+        role: '',
+        deployment: 'GitHub Pages',
+        liveUrl: '',
+      },
+    ]);
+
+    setLanguages([
+      { id: uuidv4(), language: 'German', level: 'C2' },
+      { id: uuidv4(), language: 'English', level: 'B2' },
+    ]);
+
+    setInterests([
+      { id: uuidv4(), interest: 'AI Automation' },
+      { id: uuidv4(), interest: 'Game Development' },
+      { id: uuidv4(), interest: 'Content Creation' },
+      { id: uuidv4(), interest: 'Fitness' },
+      { id: uuidv4(), interest: 'Chess' },
+    ]);
   };
 
   // Save Preview CV in a PDF file
   const printDocument = () => {
     const input = document.getElementById('preview');
-    
+
     // Use higher scale for better quality
     html2canvas(input, {
       scale: 2, // Good balance between quality and file size
       useCORS: true,
       logging: false,
-      backgroundColor: '#ffffff'
-    })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        
-        // Calculate dimensions
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        
-        let heightLeft = imgHeight;
-        let position = 0;
+      backgroundColor: '#ffffff',
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png', 1.0);
 
-        // Add the image to the first page
+      // Calculate dimensions
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // Add the image to the first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add new pages if content exceeds one page
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
+      }
 
-        // Add new pages if content exceeds one page
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-
-        // Download PDF to user
-        pdf.save("resume.pdf");
-      });
+      // Download PDF to user
+      pdf.save('resume.pdf');
+    });
   };
 
   return (
-    <div className={styles['body']}>
-      <div className={styles['App']}>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto py-8 px-4 grid lg:grid-cols-2 gap-8">
         <Form
           printDocument={printDocument}
           mobile={mobile}
           autoFill={autoFill}
-          info={info}
+          personalInfo={personalInfo}
+          handlePersonalInfoChange={handlePersonalInfoChange}
+          handleImageUpload={handleImageUpload}
+          education={education}
+          addEducation={addEducation}
+          removeEducation={removeEducation}
+          handleEducationChange={handleEducationChange}
           experience={experience}
+          addExperience={addExperience}
+          removeExperience={removeExperience}
+          handleExperienceChange={handleExperienceChange}
           skills={skills}
-          addWork={addWork}
-          removeWork={removeWork}
-          handleMouse={handleMouse}
-          handleWorkChange={handleWorkChange}
-          handleMouseSkills={handleMouseSkills}
           addSkill={addSkill}
           removeSkill={removeSkill}
           handleSkillChange={handleSkillChange}
-          handleInfoChange={handleInfoChange}
+          projects={projects}
+          addProject={addProject}
+          removeProject={removeProject}
+          handleProjectChange={handleProjectChange}
+          languages={languages}
+          addLanguage={addLanguage}
+          removeLanguage={removeLanguage}
+          handleLanguageChange={handleLanguageChange}
+          interests={interests}
+          addInterest={addInterest}
+          removeInterest={removeInterest}
+          handleInterestChange={handleInterestChange}
         />
-        <Preview 
+        <Preview
           mobile={mobile}
-          info={info}
+          personalInfo={personalInfo}
+          education={education}
           experience={experience}
           skills={skills}
+          projects={projects}
+          languages={languages}
+          interests={interests}
         />
       </div>
-      <MobileToggle 
-        handleToggle={handleToggle}
-        mobile={mobile}
-      />
+      <MobileToggle handleToggle={handleToggle} mobile={mobile} />
     </div>
   );
 }

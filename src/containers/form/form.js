@@ -1,44 +1,635 @@
 import React from 'react';
-import styles from './form.module.css';
-import PersonalForm from '../../components/personalForm/personalForm';
-import EducationalForm from '../../components/educationalForm/educationalForm';
-import PracticalForm from '../../components/practicalForm/practicalForm';
-import AppLabel from '../../components/AppLabel/AppLabel';
+import { Trash2, Plus, Download, Sparkles } from 'lucide-react';
 
 class Form extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+  render() {
+    const { mobile, personalInfo, handlePersonalInfoChange, handleImageUpload } = this.props;
 
-    }
+    return (
+      <div className={mobile.formIsOpen ? 'block' : 'hidden lg:block'}>
+        <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
+          {/* Header with Actions */}
+          <div className="flex justify-between items-center border-b pb-4">
+            <h1 className="text-2xl font-bold text-primary">CV Generator</h1>
+            <div className="flex gap-2">
+              <button
+                onClick={this.props.autoFill}
+                className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded hover:bg-accent/90 transition"
+              >
+                <Sparkles size={16} />
+                <span className="hidden sm:inline">AutoFill</span>
+              </button>
+              <button
+                onClick={this.props.printDocument}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
+              >
+                <Download size={16} />
+                <span className="hidden sm:inline">Download PDF</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Personal Information */}
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2">
+              Personal Information
+            </h2>
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">Profile Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+              />
+              {personalInfo.profileImage && (
+                <img
+                  src={personalInfo.profileImage}
+                  alt="Preview"
+                  className="w-24 h-24 rounded-full object-cover mt-2"
+                />
+              )}
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={personalInfo.firstName}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="John"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={personalInfo.lastName}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Doe"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Professional Title
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={personalInfo.title}
+                onChange={handlePersonalInfoChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Junior Full Stack Web Developer"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Bio / Summary
+              </label>
+              <textarea
+                name="bio"
+                value={personalInfo.bio}
+                onChange={handlePersonalInfoChange}
+                rows="4"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Brief professional summary..."
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={personalInfo.email}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="john@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={personalInfo.phone}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="+1234567890"
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={personalInfo.address}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="City, Country"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">GitHub</label>
+                <input
+                  type="text"
+                  name="github"
+                  value={personalInfo.github}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="github.com/username"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Education Section */}
+          {this.renderEducationSection()}
+
+          {/* Experience Section */}
+          {this.renderExperienceSection()}
+
+          {/* Skills Section */}
+          {this.renderSkillsSection()}
+
+          {/* Projects Section */}
+          {this.renderProjectsSection()}
+
+          {/* Languages Section */}
+          {this.renderLanguagesSection()}
+
+          {/* Interests Section */}
+          {this.renderInterestsSection()}
+        </div>
+      </div>
+    );
   }
 
-  render() {
+  renderEducationSection() {
+    const { education, addEducation, removeEducation, handleEducationChange } = this.props;
+
     return (
-      <div className={this.props.mobile.formIsOpen ? styles['form'] : styles['notDisplayed']}>
-          <AppLabel 
-            autoFill={this.props.autoFill}
-            state={this.props.state}
-            printDocument={this.props.printDocument} />
-          <PersonalForm 
-            handleInfoChange={this.props.handleInfoChange} 
-            info={this.props.info} />
-          <EducationalForm 
-            handleInfoChange={this.props.handleInfoChange} 
-            info={this.props.info} />
-          <PracticalForm 
-            experience={this.props.experience} 
-            skills={this.props.skills} 
-            addWork={this.props.addWork} 
-            removeWork={this.props.removeWork} 
-            handleMouse={this.props.handleMouse} 
-            handleWorkChange={this.props.handleWorkChange}
-            handleMouseSkills={this.props.handleMouseSkills}
-            addSkill={this.props.addSkill}
-            removeSkill={this.props.removeSkill}
-            handleSkillChange={this.props.handleSkillChange} />
-      </div>
-    )
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
+            Education
+          </h2>
+          <button
+            onClick={addEducation}
+            className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        </div>
+
+        {education.map((edu, index) => (
+          <div key={edu.id} className="p-4 border border-gray-200 rounded space-y-3 relative">
+            <button
+              onClick={() => removeEducation(edu.id)}
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={18} />
+            </button>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Degree / Program
+              </label>
+              <input
+                type="text"
+                value={edu.degree}
+                onChange={(e) => handleEducationChange(edu.id, 'degree', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Full Stack Web Development"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Institution</label>
+              <input
+                type="text"
+                value={edu.institution}
+                onChange={(e) => handleEducationChange(edu.id, 'institution', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="University Name"
+              />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="text"
+                  value={edu.startDate}
+                  onChange={(e) => handleEducationChange(edu.id, 'startDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="10/2024"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+                <input
+                  type="text"
+                  value={edu.endDate}
+                  onChange={(e) => handleEducationChange(edu.id, 'endDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Present"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                <input
+                  type="text"
+                  value={edu.location}
+                  onChange={(e) => handleEducationChange(edu.id, 'location', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Berlin"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Courses (one per line)
+              </label>
+              <textarea
+                value={edu.courses?.join('\n') || ''}
+                onChange={(e) =>
+                  handleEducationChange(
+                    edu.id,
+                    'courses',
+                    e.target.value.split('\n').filter((c) => c)
+                  )
+                }
+                rows="3"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Course 1&#10;Course 2&#10;Course 3"
+              />
+            </div>
+          </div>
+        ))}
+      </section>
+    );
+  }
+
+  renderExperienceSection() {
+    const { experience, addExperience, removeExperience, handleExperienceChange } = this.props;
+
+    return (
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
+            Professional Experience
+          </h2>
+          <button
+            onClick={addExperience}
+            className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        </div>
+
+        {experience.map((exp) => (
+          <div key={exp.id} className="p-4 border border-gray-200 rounded space-y-3 relative">
+            <button
+              onClick={() => removeExperience(exp.id)}
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={18} />
+            </button>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Position / Title
+              </label>
+              <input
+                type="text"
+                value={exp.position}
+                onChange={(e) => handleExperienceChange(exp.id, 'position', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Software Developer"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Company</label>
+              <input
+                type="text"
+                value={exp.company}
+                onChange={(e) => handleExperienceChange(exp.id, 'company', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Company Name"
+              />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="text"
+                  value={exp.startDate}
+                  onChange={(e) => handleExperienceChange(exp.id, 'startDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="01/2023"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+                <input
+                  type="text"
+                  value={exp.endDate}
+                  onChange={(e) => handleExperienceChange(exp.id, 'endDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Present"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                <input
+                  type="text"
+                  value={exp.location}
+                  onChange={(e) => handleExperienceChange(exp.id, 'location', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Berlin"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Achievements / Tasks (one per line)
+              </label>
+              <textarea
+                value={exp.achievements?.join('\n') || ''}
+                onChange={(e) =>
+                  handleExperienceChange(
+                    exp.id,
+                    'achievements',
+                    e.target.value.split('\n').filter((a) => a)
+                  )
+                }
+                rows="4"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Achievement 1&#10;Achievement 2&#10;Achievement 3"
+              />
+            </div>
+          </div>
+        ))}
+      </section>
+    );
+  }
+
+  renderSkillsSection() {
+    const { skills, addSkill, removeSkill, handleSkillChange } = this.props;
+
+    return (
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
+            Skills
+          </h2>
+          <button
+            onClick={addSkill}
+            className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-3">
+          {skills.map((skill) => (
+            <div key={skill.id} className="flex gap-2">
+              <input
+                type="text"
+                value={skill.skill}
+                onChange={(e) => handleSkillChange(skill.id, e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="JavaScript"
+              />
+              <button
+                onClick={() => removeSkill(skill.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  renderProjectsSection() {
+    const { projects, addProject, removeProject, handleProjectChange } = this.props;
+
+    return (
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
+            Personal Projects
+          </h2>
+          <button
+            onClick={addProject}
+            className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        </div>
+
+        {projects.map((project) => (
+          <div key={project.id} className="p-4 border border-gray-200 rounded space-y-3 relative">
+            <button
+              onClick={() => removeProject(project.id)}
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={18} />
+            </button>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Project Name</label>
+              <input
+                type="text"
+                value={project.name}
+                onChange={(e) => handleProjectChange(project.id, 'name', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Project Name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Tech Stack</label>
+              <input
+                type="text"
+                value={project.stack}
+                onChange={(e) => handleProjectChange(project.id, 'stack', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="React, Node.js, MongoDB"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Features (one per line)
+              </label>
+              <textarea
+                value={project.features?.join('\n') || ''}
+                onChange={(e) =>
+                  handleProjectChange(
+                    project.id,
+                    'features',
+                    e.target.value.split('\n').filter((f) => f)
+                  )
+                }
+                rows="3"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Your Role</label>
+                <input
+                  type="text"
+                  value={project.role}
+                  onChange={(e) => handleProjectChange(project.id, 'role', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Full Stack Developer"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Deployment</label>
+                <input
+                  type="text"
+                  value={project.deployment}
+                  onChange={(e) => handleProjectChange(project.id, 'deployment', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Heroku, AWS"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Live URL</label>
+              <input
+                type="text"
+                value={project.liveUrl}
+                onChange={(e) => handleProjectChange(project.id, 'liveUrl', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="https://project.com"
+              />
+            </div>
+          </div>
+        ))}
+      </section>
+    );
+  }
+
+  renderLanguagesSection() {
+    const { languages, addLanguage, removeLanguage, handleLanguageChange } = this.props;
+
+    return (
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
+            Languages
+          </h2>
+          <button
+            onClick={addLanguage}
+            className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-3">
+          {languages.map((lang) => (
+            <div key={lang.id} className="flex gap-2">
+              <input
+                type="text"
+                value={lang.language}
+                onChange={(e) => handleLanguageChange(lang.id, 'language', e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="English"
+              />
+              <input
+                type="text"
+                value={lang.level}
+                onChange={(e) => handleLanguageChange(lang.id, 'level', e.target.value)}
+                className="w-20 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="B2"
+              />
+              <button
+                onClick={() => removeLanguage(lang.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  renderInterestsSection() {
+    const { interests, addInterest, removeInterest, handleInterestChange } = this.props;
+
+    return (
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
+            Interests
+          </h2>
+          <button
+            onClick={addInterest}
+            className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
+          >
+            <Plus size={16} />
+            Add
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-3">
+          {interests.map((interest) => (
+            <div key={interest.id} className="flex gap-2">
+              <input
+                type="text"
+                value={interest.interest}
+                onChange={(e) => handleInterestChange(interest.id, e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Chess"
+              />
+              <button
+                onClick={() => removeInterest(interest.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
   }
 }
 
