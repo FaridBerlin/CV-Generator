@@ -445,117 +445,159 @@ function App() {
       return;
     }
 
-    // Store original display properties
+    // Store original properties
     const originalClasses = input.className;
     const wasHidden = input.classList.contains('hidden');
+    const originalWidth = input.style.width;
+    const originalMaxWidth = input.style.maxWidth;
 
-    // Temporarily make visible for capturing (if hidden)
+    // Store original inline styles for elements we'll modify
+    const modifications = [];
+
+    // Temporarily make visible
     if (wasHidden) {
       input.classList.remove('hidden');
       input.classList.add('block');
     }
 
-    // Use higher scale for better quality
-    html2canvas(input, {
-      scale: 2, // Good balance between quality and file size
-      useCORS: true,
-      allowTaint: true, // Allow cross-origin images
-      logging: true, // Enable logging to see what's happening
-      backgroundColor: '#ffffff',
-      imageTimeout: 15000, // Wait up to 15 seconds for images to load
-      removeContainer: true,
-      foreignObjectRendering: false, // Better SVG handling
-    })
-      .then((canvas) => {
-        try {
-          console.log('Canvas created successfully:', canvas.width, 'x', canvas.height);
+    // Set fixed width on the preview container itself
+    input.style.width = '1000px';
+    input.style.maxWidth = '1000px';
 
-          // Use JPEG for better compatibility and smaller size
-          const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-          console.log('Image data URL length:', imgData.length);
-          console.log('Image data URL start:', imgData.substring(0, 50));
-          console.log(
-            'Image data type check:',
-            typeof imgData,
-            'starts with data:image?',
-            imgData.startsWith('data:image')
-          );
-
-          // Validate the data URL - be more lenient
-          if (!imgData || imgData === 'data:,') {
-            console.error(
-              'Invalid image data:',
-              imgData ? imgData.substring(0, 100) : 'imgData is null/undefined'
-            );
-            throw new Error('Failed to generate image data from canvas');
-          }
-
-          if (!imgData.startsWith('data:image')) {
-            console.error(
-              'Image data does not start with data:image, actual start:',
-              imgData.substring(0, 100)
-            );
-            throw new Error('Invalid image data format - not a valid data URL');
-          }
-
-          // Calculate dimensions
-          const imgWidth = 210; // A4 width in mm
-          const pageHeight = 297; // A4 height in mm
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-          console.log('Creating PDF with dimensions:', imgWidth, 'x', imgHeight);
-
-          const pdf = new jsPDF('p', 'mm', 'a4');
-
-          let heightLeft = imgHeight;
-          let position = 0;
-
-          // Add the image to the first page
-          console.log('Adding image to PDF...');
-          pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-
-          // Add new pages if content exceeds one page
-          while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-          }
-
-          // Download PDF to user
-          console.log('Saving PDF...');
-          pdf.save('resume.pdf');
-          console.log('PDF saved successfully!');
-
-          // Restore original classes
-          if (wasHidden) {
-            input.className = originalClasses;
-          }
-        } catch (error) {
-          console.error('Error generating PDF:', error);
-          console.error('Error stack:', error.stack);
-
-          // Restore original classes on error
-          if (wasHidden) {
-            input.className = originalClasses;
-          }
-
-          alert(`Failed to generate PDF: ${error.message}\nCheck the console for more details.`);
-        }
-      })
-      .catch((error) => {
-        console.error('Error capturing preview:', error);
-        console.error('Error stack:', error.stack);
-
-        // Restore original classes on error
-        if (wasHidden) {
-          input.className = originalClasses;
-        }
-
-        alert(`Failed to capture preview: ${error.message}\nCheck the console for more details.`);
+    // Force desktop layout on header flex
+    const headerFlex = input.querySelector('header > div.flex');
+    if (headerFlex) {
+      modifications.push({
+        element: headerFlex,
+        property: 'flexDirection',
+        original: headerFlex.style.flexDirection,
       });
+      headerFlex.style.flexDirection = 'row';
+      headerFlex.style.alignItems = 'flex-start';
+      headerFlex.style.justifyContent = 'space-between';
+    }
+
+    // Force contact bar to not wrap
+    const contactBar = input.querySelectorAll('header > div')[1]; // Second div in header
+    if (contactBar) {
+      modifications.push({
+        element: contactBar,
+        property: 'flexWrap',
+        original: contactBar.style.flexWrap,
+      });
+      contactBar.style.flexWrap = 'nowrap';
+    }
+
+    // Force two-column grid
+    const mainGrid = input.querySelector('div.grid');
+    if (mainGrid) {
+      modifications.push({
+        element: mainGrid,
+        property: 'display',
+        original: mainGrid.style.display,
+      });
+      modifications.push({
+        element: mainGrid,
+        property: 'gridTemplateColumns',
+        original: mainGrid.style.gridTemplateColumns,
+      });
+      mainGrid.style.display = 'grid';
+      mainGrid.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+    }
+
+    // Wait for re-render
+    setTimeout(() => {
+      html2canvas(input, {
+        scale: 1, // Use scale 1 to get actual size
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        imageTimeout: 15000,
+        removeContainer: true,
+        foreignObjectRendering: false,
+        width: 1000,
+      })
+        .then((canvas) => {
+          try {
+            console.log('Canvas created:', canvas.width, 'x', canvas.height);
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+            if (!imgData || imgData === 'data:,' || !imgData.startsWith('data:image')) {
+              throw new Error('Failed to generate image data from canvas');
+            }
+
+            const pdfWidth = 210;
+            const pdfHeight = 297;
+            const imgWidth = pdfWidth;
+            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            console.log('PDF dimensions:', imgWidth, 'x', imgHeight, 'mm');
+            console.log('Pages needed:', Math.ceil(imgHeight / pdfHeight));
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            if (imgHeight <= pdfHeight) {
+              pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+            } else {
+              let heightLeft = imgHeight;
+              let position = 0;
+              pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+              heightLeft -= pdfHeight;
+
+              while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+              }
+            }
+
+            pdf.save('resume.pdf');
+            console.log('PDF saved successfully!');
+
+            // Restore all modifications
+            input.style.width = originalWidth;
+            input.style.maxWidth = originalMaxWidth;
+            modifications.forEach((mod) => {
+              mod.element.style[mod.property] = mod.original;
+            });
+            if (wasHidden) {
+              input.className = originalClasses;
+            }
+          } catch (error) {
+            console.error('Error generating PDF:', error);
+
+            // Restore all modifications
+            input.style.width = originalWidth;
+            input.style.maxWidth = originalMaxWidth;
+            modifications.forEach((mod) => {
+              mod.element.style[mod.property] = mod.original;
+            });
+            if (wasHidden) {
+              input.className = originalClasses;
+            }
+
+            alert(`Failed to generate PDF: ${error.message}`);
+          }
+        })
+        .catch((error) => {
+          console.error('Error capturing preview:', error);
+
+          // Restore all modifications
+          input.style.width = originalWidth;
+          input.style.maxWidth = originalMaxWidth;
+          modifications.forEach((mod) => {
+            mod.element.style[mod.property] = mod.original;
+          });
+          if (wasHidden) {
+            input.className = originalClasses;
+          }
+
+          alert(`Failed to capture preview: ${error.message}`);
+        });
+    }, 300);
   };
 
   return (
