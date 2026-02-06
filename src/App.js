@@ -126,7 +126,7 @@ function App() {
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            
+
             // Calculate new dimensions (max 800px on longest side)
             if (width > height) {
               if (width > 800) {
@@ -139,13 +139,13 @@ function App() {
                 height = 800;
               }
             }
-            
+
             canvas.width = width;
             canvas.height = height;
-            
+
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            
+
             // Convert to data URL with compression
             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
             setPersonalInfo((prev) => ({ ...prev, profileImage: compressedDataUrl }));
@@ -439,7 +439,7 @@ function App() {
   // Save Preview CV in a PDF file
   const printDocument = () => {
     const input = document.getElementById('preview');
-    
+
     if (!input) {
       alert('Preview element not found. Please try again.');
       return;
@@ -448,7 +448,7 @@ function App() {
     // Store original display properties
     const originalClasses = input.className;
     const wasHidden = input.classList.contains('hidden');
-    
+
     // Temporarily make visible for capturing (if hidden)
     if (wasHidden) {
       input.classList.remove('hidden');
@@ -465,84 +465,97 @@ function App() {
       imageTimeout: 15000, // Wait up to 15 seconds for images to load
       removeContainer: true,
       foreignObjectRendering: false, // Better SVG handling
-    }).then((canvas) => {
-      try {
-        console.log('Canvas created successfully:', canvas.width, 'x', canvas.height);
-        
-        // Use JPEG for better compatibility and smaller size
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        
-        console.log('Image data URL length:', imgData.length);
-        console.log('Image data URL start:', imgData.substring(0, 50));
-        console.log('Image data type check:', typeof imgData, 'starts with data:image?', imgData.startsWith('data:image'));
+    })
+      .then((canvas) => {
+        try {
+          console.log('Canvas created successfully:', canvas.width, 'x', canvas.height);
 
-        // Validate the data URL - be more lenient
-        if (!imgData || imgData === 'data:,') {
-          console.error('Invalid image data:', imgData ? imgData.substring(0, 100) : 'imgData is null/undefined');
-          throw new Error('Failed to generate image data from canvas');
-        }
-        
-        if (!imgData.startsWith('data:image')) {
-          console.error('Image data does not start with data:image, actual start:', imgData.substring(0, 100));
-          throw new Error('Invalid image data format - not a valid data URL');
-        }
+          // Use JPEG for better compatibility and smaller size
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-        // Calculate dimensions
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          console.log('Image data URL length:', imgData.length);
+          console.log('Image data URL start:', imgData.substring(0, 50));
+          console.log(
+            'Image data type check:',
+            typeof imgData,
+            'starts with data:image?',
+            imgData.startsWith('data:image')
+          );
 
-        console.log('Creating PDF with dimensions:', imgWidth, 'x', imgHeight);
+          // Validate the data URL - be more lenient
+          if (!imgData || imgData === 'data:,') {
+            console.error(
+              'Invalid image data:',
+              imgData ? imgData.substring(0, 100) : 'imgData is null/undefined'
+            );
+            throw new Error('Failed to generate image data from canvas');
+          }
 
-        const pdf = new jsPDF('p', 'mm', 'a4');
+          if (!imgData.startsWith('data:image')) {
+            console.error(
+              'Image data does not start with data:image, actual start:',
+              imgData.substring(0, 100)
+            );
+            throw new Error('Invalid image data format - not a valid data URL');
+          }
 
-        let heightLeft = imgHeight;
-        let position = 0;
+          // Calculate dimensions
+          const imgWidth = 210; // A4 width in mm
+          const pageHeight = 297; // A4 height in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        // Add the image to the first page
-        console.log('Adding image to PDF...');
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+          console.log('Creating PDF with dimensions:', imgWidth, 'x', imgHeight);
 
-        // Add new pages if content exceeds one page
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
+          const pdf = new jsPDF('p', 'mm', 'a4');
+
+          let heightLeft = imgHeight;
+          let position = 0;
+
+          // Add the image to the first page
+          console.log('Adding image to PDF...');
           pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
-        }
 
-        // Download PDF to user
-        console.log('Saving PDF...');
-        pdf.save('resume.pdf');
-        console.log('PDF saved successfully!');
-        
-        // Restore original classes
-        if (wasHidden) {
-          input.className = originalClasses;
+          // Add new pages if content exceeds one page
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
+          // Download PDF to user
+          console.log('Saving PDF...');
+          pdf.save('resume.pdf');
+          console.log('PDF saved successfully!');
+
+          // Restore original classes
+          if (wasHidden) {
+            input.className = originalClasses;
+          }
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+          console.error('Error stack:', error.stack);
+
+          // Restore original classes on error
+          if (wasHidden) {
+            input.className = originalClasses;
+          }
+
+          alert(`Failed to generate PDF: ${error.message}\nCheck the console for more details.`);
         }
-      } catch (error) {
-        console.error('Error generating PDF:', error);
+      })
+      .catch((error) => {
+        console.error('Error capturing preview:', error);
         console.error('Error stack:', error.stack);
-        
+
         // Restore original classes on error
         if (wasHidden) {
           input.className = originalClasses;
         }
-        
-        alert(`Failed to generate PDF: ${error.message}\nCheck the console for more details.`);
-      }
-    }).catch((error) => {
-      console.error('Error capturing preview:', error);
-      console.error('Error stack:', error.stack);
-      
-      // Restore original classes on error
-      if (wasHidden) {
-        input.className = originalClasses;
-      }
-      
-      alert(`Failed to capture preview: ${error.message}\nCheck the console for more details.`);
-    });
+
+        alert(`Failed to capture preview: ${error.message}\nCheck the console for more details.`);
+      });
   };
 
   return (
