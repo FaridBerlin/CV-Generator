@@ -4,9 +4,7 @@ import styles from './HeaderPreview.module.css';
 class HeaderPreview extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    }
+    this.state = {};
   }
 
   render() {
@@ -20,10 +18,7 @@ class HeaderPreview extends React.Component {
       <div>
         <div className={styles['header']}>
           <h1>
-            <span
-              className={styles['firstName']}>
-                {capitalizedFirstName}
-            </span>
+            <span className={styles['firstName']}>{capitalizedFirstName}</span>
             {capitalizedLastName}
           </h1>
         </div>
@@ -31,7 +26,7 @@ class HeaderPreview extends React.Component {
           <h2 className={styles['positionHeader']}>{this.props.experience[0].position}</h2>
         </div>
       </div>
-    )
+    );
   }
 }
 

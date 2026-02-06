@@ -101,9 +101,64 @@ function App() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        alert('Image is too large. Please use an image smaller than 5MB.');
+        e.target.value = ''; // Reset file input
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        e.target.value = ''; // Reset file input
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPersonalInfo((prev) => ({ ...prev, profileImage: reader.result }));
+        // Create an image element to compress if needed
+        const img = new Image();
+        img.onload = () => {
+          // If image is very large, compress it
+          if (img.width > 800 || img.height > 800) {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            
+            // Calculate new dimensions (max 800px on longest side)
+            if (width > height) {
+              if (width > 800) {
+                height = (height * 800) / width;
+                width = 800;
+              }
+            } else {
+              if (height > 800) {
+                width = (width * 800) / height;
+                height = 800;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convert to data URL with compression
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            setPersonalInfo((prev) => ({ ...prev, profileImage: compressedDataUrl }));
+          } else {
+            // Image is small enough, use as-is
+            setPersonalInfo((prev) => ({ ...prev, profileImage: reader.result }));
+          }
+        };
+        img.src = reader.result;
+      };
+      reader.onerror = () => {
+        alert('Failed to read the image file. Please try again.');
+        e.target.value = ''; // Reset file input
       };
       reader.readAsDataURL(file);
     }
@@ -384,40 +439,109 @@ function App() {
   // Save Preview CV in a PDF file
   const printDocument = () => {
     const input = document.getElementById('preview');
+    
+    if (!input) {
+      alert('Preview element not found. Please try again.');
+      return;
+    }
+
+    // Store original display properties
+    const originalClasses = input.className;
+    const wasHidden = input.classList.contains('hidden');
+    
+    // Temporarily make visible for capturing (if hidden)
+    if (wasHidden) {
+      input.classList.remove('hidden');
+      input.classList.add('block');
+    }
 
     // Use higher scale for better quality
     html2canvas(input, {
       scale: 2, // Good balance between quality and file size
       useCORS: true,
-      logging: false,
+      allowTaint: true, // Allow cross-origin images
+      logging: true, // Enable logging to see what's happening
       backgroundColor: '#ffffff',
+      imageTimeout: 15000, // Wait up to 15 seconds for images to load
+      removeContainer: true,
+      foreignObjectRendering: false, // Better SVG handling
     }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png', 1.0);
+      try {
+        console.log('Canvas created successfully:', canvas.width, 'x', canvas.height);
+        
+        // Use JPEG for better compatibility and smaller size
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        
+        console.log('Image data URL length:', imgData.length);
+        console.log('Image data URL start:', imgData.substring(0, 50));
+        console.log('Image data type check:', typeof imgData, 'starts with data:image?', imgData.startsWith('data:image'));
 
-      // Calculate dimensions
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        // Validate the data URL - be more lenient
+        if (!imgData || imgData === 'data:,') {
+          console.error('Invalid image data:', imgData ? imgData.substring(0, 100) : 'imgData is null/undefined');
+          throw new Error('Failed to generate image data from canvas');
+        }
+        
+        if (!imgData.startsWith('data:image')) {
+          console.error('Image data does not start with data:image, actual start:', imgData.substring(0, 100));
+          throw new Error('Invalid image data format - not a valid data URL');
+        }
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
+        // Calculate dimensions
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      let heightLeft = imgHeight;
-      let position = 0;
+        console.log('Creating PDF with dimensions:', imgWidth, 'x', imgHeight);
 
-      // Add the image to the first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+        const pdf = new jsPDF('p', 'mm', 'a4');
 
-      // Add new pages if content exceeds one page
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // Add the image to the first page
+        console.log('Adding image to PDF...');
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
-      }
 
-      // Download PDF to user
-      pdf.save('resume.pdf');
+        // Add new pages if content exceeds one page
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Download PDF to user
+        console.log('Saving PDF...');
+        pdf.save('resume.pdf');
+        console.log('PDF saved successfully!');
+        
+        // Restore original classes
+        if (wasHidden) {
+          input.className = originalClasses;
+        }
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        console.error('Error stack:', error.stack);
+        
+        // Restore original classes on error
+        if (wasHidden) {
+          input.className = originalClasses;
+        }
+        
+        alert(`Failed to generate PDF: ${error.message}\nCheck the console for more details.`);
+      }
+    }).catch((error) => {
+      console.error('Error capturing preview:', error);
+      console.error('Error stack:', error.stack);
+      
+      // Restore original classes on error
+      if (wasHidden) {
+        input.className = originalClasses;
+      }
+      
+      alert(`Failed to capture preview: ${error.message}\nCheck the console for more details.`);
     });
   };
 
