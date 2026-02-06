@@ -508,7 +508,7 @@ function App() {
     // Wait for re-render
     setTimeout(() => {
       html2canvas(input, {
-        scale: 1, // Use scale 1 to get actual size
+        scale: 2, // Higher quality
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -517,6 +517,7 @@ function App() {
         removeContainer: true,
         foreignObjectRendering: false,
         width: 1000,
+        windowWidth: 1000,
       })
         .then((canvas) => {
           try {
@@ -534,25 +535,11 @@ function App() {
             const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
             console.log('PDF dimensions:', imgWidth, 'x', imgHeight, 'mm');
-            console.log('Pages needed:', Math.ceil(imgHeight / pdfHeight));
 
             const pdf = new jsPDF('p', 'mm', 'a4');
 
-            if (imgHeight <= pdfHeight) {
-              pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-            } else {
-              let heightLeft = imgHeight;
-              let position = 0;
-              pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-              heightLeft -= pdfHeight;
-
-              while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pdfHeight;
-              }
-            }
+            // Add the full image to one page - jsPDF will handle it
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
 
             pdf.save('resume.pdf');
             console.log('PDF saved successfully!');

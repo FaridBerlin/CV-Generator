@@ -39,29 +39,89 @@ class Preview extends React.Component {
             </div>
 
             {/* Contact Bar */}
-            <div className="mt-4 -mx-5 -mb-5 bg-primary-dark px-5 py-2 flex flex-wrap items-center gap-3 text-xs">
+            <div className="mt-4 -mx-5 -mb-5 bg-primary-dark px-5 py-3 flex flex-wrap items-center gap-3 text-xs">
               {personalInfo.email && (
-                <div className="flex items-center gap-1.5">
-                  <Mail size={14} />
-                  <span>{personalInfo.email}</span>
+                <div
+                  className="flex items-center gap-1.5"
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '14px',
+                      height: '14px',
+                      position: 'relative',
+                      top: '5px',
+                    }}
+                  >
+                    <Mail size={14} style={{ display: 'block', width: '14px', height: '14px' }} />
+                  </span>
+                  <span style={{ display: 'inline-block', lineHeight: '14px' }}>
+                    {personalInfo.email}
+                  </span>
                 </div>
               )}
               {personalInfo.phone && (
-                <div className="flex items-center gap-1.5">
-                  <Phone size={14} />
-                  <span>{personalInfo.phone}</span>
+                <div
+                  className="flex items-center gap-1.5"
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '14px',
+                      height: '14px',
+                      position: 'relative',
+                      top: '5px',
+                    }}
+                  >
+                    <Phone size={14} style={{ display: 'block', width: '14px', height: '14px' }} />
+                  </span>
+                  <span style={{ display: 'inline-block', lineHeight: '14px' }}>
+                    {personalInfo.phone}
+                  </span>
                 </div>
               )}
               {personalInfo.address && (
-                <div className="flex items-center gap-1.5">
-                  <MapPin size={14} />
-                  <span>{personalInfo.address}</span>
+                <div
+                  className="flex items-center gap-1.5"
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '14px',
+                      height: '14px',
+                      position: 'relative',
+                      top: '5px',
+                    }}
+                  >
+                    <MapPin size={14} style={{ display: 'block', width: '14px', height: '14px' }} />
+                  </span>
+                  <span style={{ display: 'inline-block', lineHeight: '14px' }}>
+                    {personalInfo.address}
+                  </span>
                 </div>
               )}
               {personalInfo.github && (
-                <div className="flex items-center gap-1.5">
-                  <Github size={14} />
-                  <span>{personalInfo.github}</span>
+                <div
+                  className="flex items-center gap-1.5"
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '14px',
+                      height: '14px',
+                      position: 'relative',
+                      top: '5px',
+                    }}
+                  >
+                    <Github size={14} style={{ display: 'block', width: '14px', height: '14px' }} />
+                  </span>
+                  <span style={{ display: 'inline-block', lineHeight: '14px' }}>
+                    {personalInfo.github}
+                  </span>
                 </div>
               )}
             </div>
@@ -90,11 +150,21 @@ class Preview extends React.Component {
                     {edu.courses && edu.courses.length > 0 && (
                       <>
                         <p className="text-xs font-semibold text-accent mb-1">Courses:</p>
-                        <ul className="text-xs space-y-0.5 list-disc list-inside marker:text-accent">
+                        <div className="text-xs space-y-0.5">
                           {edu.courses.map((course, idx) => (
-                            <li key={idx}>{course}</li>
+                            <div
+                              key={idx}
+                              style={{ display: 'flex', alignItems: 'flex-start', gap: '0' }}
+                            >
+                              <span
+                                style={{ color: '#10b981', marginRight: '4px', lineHeight: '1.2' }}
+                              >
+                                •
+                              </span>
+                              <span style={{ flex: 1, lineHeight: '1.2' }}>{course}</span>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       </>
                     )}
                   </div>
@@ -124,11 +194,21 @@ class Preview extends React.Component {
                         <p className="text-xs font-semibold text-accent mb-1">
                           Achievements/Tasks:
                         </p>
-                        <ul className="text-xs space-y-0.5 list-disc list-inside marker:text-accent">
+                        <div className="text-xs space-y-0.5">
                           {exp.achievements.map((achievement, idx) => (
-                            <li key={idx}>{achievement}</li>
+                            <div
+                              key={idx}
+                              style={{ display: 'flex', alignItems: 'flex-start', gap: '0' }}
+                            >
+                              <span
+                                style={{ color: '#10b981', marginRight: '4px', lineHeight: '1.2' }}
+                              >
+                                •
+                              </span>
+                              <span style={{ flex: 1, lineHeight: '1.2' }}>{achievement}</span>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       </>
                     )}
                   </div>
@@ -149,7 +229,16 @@ class Preview extends React.Component {
                     .map((skill) => (
                       <span
                         key={skill.id}
-                        className="bg-primary text-white px-2 py-0.5 rounded text-xs inline-flex items-center justify-center"
+                        className="bg-primary text-white px-2 py-1 rounded text-xs inline-flex items-center justify-center leading-none"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: '1',
+                          paddingTop: '7px',
+                          paddingBottom: '13px',
+                          minHeight: '28px',
+                        }}
                       >
                         {skill.skill}
                       </span>
@@ -174,11 +263,21 @@ class Preview extends React.Component {
                         </p>
                       )}
                       {project.features && project.features.length > 0 && (
-                        <ul className="text-xs space-y-0.5 list-disc list-inside marker:text-accent">
+                        <div className="text-xs space-y-0.5">
                           {project.features.map((feature, idx) => (
-                            <li key={idx}>{feature}</li>
+                            <div
+                              key={idx}
+                              style={{ display: 'flex', alignItems: 'flex-start', gap: '0' }}
+                            >
+                              <span
+                                style={{ color: '#10b981', marginRight: '4px', lineHeight: '1.2' }}
+                              >
+                                •
+                              </span>
+                              <span style={{ flex: 1, lineHeight: '1.2' }}>{feature}</span>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       )}
                       {project.role && (
                         <p className="text-xs">
@@ -228,7 +327,16 @@ class Preview extends React.Component {
                     .map((interest) => (
                       <span
                         key={interest.id}
-                        className="border-2 border-gray-300 px-2 py-0.5 rounded text-xs inline-flex items-center justify-center"
+                        className="border-2 border-gray-300 px-2 py-1 rounded text-xs inline-flex items-center justify-center leading-none"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: '1',
+                          paddingTop: '7px',
+                          paddingBottom: '13px',
+                          minHeight: '28px',
+                        }}
                       >
                         {interest.interest}
                       </span>
