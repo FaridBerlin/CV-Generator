@@ -19,14 +19,14 @@ const dateRange = (start: string, end: string) => {
 };
 
 const BulletList = ({ items }: { items: string[] }) => (
-  <>
+  <View style={styles.bulletList}>
     {items.map((item, idx) => (
       <View style={styles.bulletRow} key={idx}>
         <Text style={styles.bulletDot}>•</Text>
         <Text style={styles.bulletText}>{item}</Text>
       </View>
     ))}
-  </>
+  </View>
 );
 
 const Pills = ({ items }: { items: string[] }) => (
@@ -120,42 +120,46 @@ function CVDocument({
           <View style={styles.column}>
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Professional Experience</Text>
-              {experience.map((exp) => (
-                <View style={styles.entry} key={exp.id} wrap={false}>
-                  <Text style={styles.entryTitle}>{exp.position || 'Position'}</Text>
-                  <Text style={styles.entrySubtitle}>{exp.company || 'Company'}</Text>
-                  <View style={styles.entryMetaRow}>
-                    <Text style={styles.entryMeta}>{dateRange(exp.startDate, exp.endDate)}</Text>
-                    {exp.location ? <Text style={styles.entryMeta}>{exp.location}</Text> : null}
+              <View style={styles.entryList}>
+                {experience.map((exp) => (
+                  <View style={styles.entry} key={exp.id} wrap={false}>
+                    <Text style={styles.entryTitle}>{exp.position || 'Position'}</Text>
+                    <Text style={styles.entrySubtitle}>{exp.company || 'Company'}</Text>
+                    <View style={styles.entryMetaRow}>
+                      <Text style={styles.entryMeta}>{dateRange(exp.startDate, exp.endDate)}</Text>
+                      {exp.location ? <Text style={styles.entryMeta}>{exp.location}</Text> : null}
+                    </View>
+                    {exp.achievements && exp.achievements.length > 0 && (
+                      <>
+                        <Text style={styles.entryLabel}>Achievements/Tasks:</Text>
+                        <BulletList items={exp.achievements} />
+                      </>
+                    )}
                   </View>
-                  {exp.achievements && exp.achievements.length > 0 && (
-                    <>
-                      <Text style={styles.entryLabel}>Achievements/Tasks:</Text>
-                      <BulletList items={exp.achievements} />
-                    </>
-                  )}
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Education</Text>
-              {education.map((edu) => (
-                <View style={styles.entry} key={edu.id} wrap={false}>
-                  <Text style={styles.entryTitle}>{edu.degree || 'Degree'}</Text>
-                  <Text style={styles.entrySubtitle}>{edu.institution || 'Institution'}</Text>
-                  <View style={styles.entryMetaRow}>
-                    <Text style={styles.entryMeta}>{dateRange(edu.startDate, edu.endDate)}</Text>
-                    {edu.location ? <Text style={styles.entryMeta}>{edu.location}</Text> : null}
+              <View style={styles.entryList}>
+                {education.map((edu) => (
+                  <View style={styles.entry} key={edu.id} wrap={false}>
+                    <Text style={styles.entryTitle}>{edu.degree || 'Degree'}</Text>
+                    <Text style={styles.entrySubtitle}>{edu.institution || 'Institution'}</Text>
+                    <View style={styles.entryMetaRow}>
+                      <Text style={styles.entryMeta}>{dateRange(edu.startDate, edu.endDate)}</Text>
+                      {edu.location ? <Text style={styles.entryMeta}>{edu.location}</Text> : null}
+                    </View>
+                    {edu.courses && edu.courses.length > 0 && (
+                      <>
+                        <Text style={styles.entryLabel}>Courses:</Text>
+                        <BulletList items={edu.courses} />
+                      </>
+                    )}
                   </View>
-                  {edu.courses && edu.courses.length > 0 && (
-                    <>
-                      <Text style={styles.entryLabel}>Courses:</Text>
-                      <BulletList items={edu.courses} />
-                    </>
-                  )}
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
           </View>
 
@@ -172,38 +176,42 @@ function CVDocument({
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Personal Projects</Text>
-              {projects.map((project) => (
-                <View style={styles.entry} key={project.id} wrap={false}>
-                  <Text style={styles.entryTitle}>{project.name || 'Project Name'}</Text>
-                  {project.stack ? (
-                    <Text style={styles.inlineRow}>
-                      <Text style={styles.inlineLabel}>Stack: </Text>
-                      {project.stack}
-                    </Text>
-                  ) : null}
-                  {project.features && project.features.length > 0 && (
-                    <BulletList items={project.features} />
-                  )}
-                  {project.role ? (
-                    <Text style={styles.inlineRow}>
-                      <Text style={styles.inlineLabel}>Role: </Text>
-                      {project.role}
-                    </Text>
-                  ) : null}
-                  {project.deployment ? (
-                    <Text style={styles.inlineRow}>
-                      <Text style={styles.inlineLabel}>Deployment: </Text>
-                      {project.deployment}
-                    </Text>
-                  ) : null}
-                  {project.liveUrl ? (
-                    <Text style={styles.inlineRow}>
-                      <Text style={styles.inlineLabel}>Live: </Text>
-                      {project.liveUrl}
-                    </Text>
-                  ) : null}
-                </View>
-              ))}
+              <View style={styles.entryList}>
+                {projects.map((project) => (
+                  <View style={styles.entry} key={project.id} wrap={false}>
+                    <Text style={styles.entryTitle}>{project.name || 'Project Name'}</Text>
+                    <View style={styles.entryDetails}>
+                      {project.stack ? (
+                        <Text style={styles.inlineRow}>
+                          <Text style={styles.inlineLabel}>Stack: </Text>
+                          {project.stack}
+                        </Text>
+                      ) : null}
+                      {project.features && project.features.length > 0 && (
+                        <BulletList items={project.features} />
+                      )}
+                      {project.role ? (
+                        <Text style={styles.inlineRow}>
+                          <Text style={styles.inlineLabel}>Role: </Text>
+                          {project.role}
+                        </Text>
+                      ) : null}
+                      {project.deployment ? (
+                        <Text style={styles.inlineRow}>
+                          <Text style={styles.inlineLabel}>Deployment: </Text>
+                          {project.deployment}
+                        </Text>
+                      ) : null}
+                      {project.liveUrl ? (
+                        <Text style={styles.inlineRow}>
+                          <Text style={styles.inlineLabel}>Live: </Text>
+                          {project.liveUrl}
+                        </Text>
+                      ) : null}
+                    </View>
+                  </View>
+                ))}
+              </View>
             </View>
 
             {filledLanguages.length > 0 && (

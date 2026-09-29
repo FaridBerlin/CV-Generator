@@ -117,9 +117,10 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     borderBottomColor: colors.accent,
   },
-  entry: {
-    marginBottom: 10,
+  entryList: {
+    gap: 10,
   },
+  entry: {},
   entryTitle: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 10.5,
@@ -146,9 +147,14 @@ export const styles = StyleSheet.create({
     color: colors.accent,
     marginBottom: 3,
   },
+  entryDetails: {
+    gap: 2,
+  },
+  bulletList: {
+    gap: 2,
+  },
   bulletRow: {
     flexDirection: 'row',
-    marginBottom: 2,
   },
   bulletDot: {
     fontSize: 8,
@@ -165,12 +171,13 @@ export const styles = StyleSheet.create({
   },
   inlineRow: {
     fontSize: 8,
-    marginBottom: 2,
     lineHeight: 1.3,
   },
   pillWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    columnGap: 6,
+    rowGap: 6,
   },
   pill: {
     backgroundColor: colors.primary,
@@ -179,19 +186,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 3,
-    marginRight: 6,
-    marginBottom: 6,
-  },
-  outlinePill: {
-    borderWidth: 1,
-    borderColor: colors.lightGray,
-    color: '#1f2937',
-    fontSize: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 3,
-    marginRight: 6,
-    marginBottom: 6,
   },
   interestPill: {
     flexDirection: 'row',
@@ -201,8 +195,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 3,
-    marginRight: 6,
-    marginBottom: 6,
   },
   interestPillIcon: {
     marginRight: 5,
@@ -214,10 +206,10 @@ export const styles = StyleSheet.create({
   languageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    rowGap: 8,
   },
   languageItem: {
     width: '50%',
-    marginBottom: 8,
   },
   languageName: {
     fontFamily: 'Helvetica-Bold',
