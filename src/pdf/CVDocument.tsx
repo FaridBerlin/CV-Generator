@@ -85,26 +85,6 @@ function CVDocument({
           {/* Left column */}
           <View style={styles.column}>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Education</Text>
-              {education.map((edu) => (
-                <View style={styles.entry} key={edu.id} wrap={false}>
-                  <Text style={styles.entryTitle}>{edu.degree || 'Degree'}</Text>
-                  <Text style={styles.entrySubtitle}>{edu.institution || 'Institution'}</Text>
-                  <View style={styles.entryMetaRow}>
-                    <Text style={styles.entryMeta}>{dateRange(edu.startDate, edu.endDate)}</Text>
-                    {edu.location ? <Text style={styles.entryMeta}>{edu.location}</Text> : null}
-                  </View>
-                  {edu.courses && edu.courses.length > 0 && (
-                    <>
-                      <Text style={styles.entryLabel}>Courses:</Text>
-                      <BulletList items={edu.courses} />
-                    </>
-                  )}
-                </View>
-              ))}
-            </View>
-
-            <View style={styles.section}>
               <Text style={styles.sectionTitle}>Professional Experience</Text>
               {experience.map((exp) => (
                 <View style={styles.entry} key={exp.id} wrap={false}>
@@ -118,6 +98,26 @@ function CVDocument({
                     <>
                       <Text style={styles.entryLabel}>Achievements/Tasks:</Text>
                       <BulletList items={exp.achievements} />
+                    </>
+                  )}
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Education</Text>
+              {education.map((edu) => (
+                <View style={styles.entry} key={edu.id} wrap={false}>
+                  <Text style={styles.entryTitle}>{edu.degree || 'Degree'}</Text>
+                  <Text style={styles.entrySubtitle}>{edu.institution || 'Institution'}</Text>
+                  <View style={styles.entryMetaRow}>
+                    <Text style={styles.entryMeta}>{dateRange(edu.startDate, edu.endDate)}</Text>
+                    {edu.location ? <Text style={styles.entryMeta}>{edu.location}</Text> : null}
+                  </View>
+                  {edu.courses && edu.courses.length > 0 && (
+                    <>
+                      <Text style={styles.entryLabel}>Courses:</Text>
+                      <BulletList items={edu.courses} />
                     </>
                   )}
                 </View>
