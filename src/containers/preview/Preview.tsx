@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, Link } from 'lucide-react';
 import type {
   PersonalInfo,
   Education,
@@ -159,7 +159,7 @@ function Preview({
                     overflow: 'visible',
                   }}
                 >
-                  <Github
+                  <Link
                     size={14}
                     fill="white"
                     stroke="white"

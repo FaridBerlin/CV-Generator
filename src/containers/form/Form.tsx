@@ -86,7 +86,7 @@ function Form({
     <div className={mobile.formIsOpen ? 'block' : 'hidden lg:block'}>
       <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
         {/* Header with Actions */}
-        <div className="flex justify-between items-center border-b pb-4">
+        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
           <h1 className="text-2xl font-bold text-primary">CV Generator</h1>
           <div className="flex gap-2">
             <button
