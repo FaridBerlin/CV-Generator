@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Link } from 'lucide-react';
+import { Mail, Phone, MapPin, Link, BrainCircuit, Gamepad2, Dumbbell, ChessKnight, Star } from 'lucide-react';
 import type {
   PersonalInfo,
   Education,
@@ -9,6 +9,15 @@ import type {
   Interest,
   MobileState,
 } from '../../types/cv';
+import { getInterestIconKind } from '../../utils/interestIcon';
+
+const interestIcons = {
+  ai: BrainCircuit,
+  game: Gamepad2,
+  fitness: Dumbbell,
+  chess: ChessKnight,
+  default: Star,
+};
 
 interface PreviewProps {
   mobile: MobileState;
@@ -53,10 +62,10 @@ function Preview({
                 <img
                   src={personalInfo.profileImage}
                   alt="Profile"
-                  className="w-24 h-24 rounded-full object-cover border-4 border-white/30"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-accent"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white/30 flex items-center justify-center text-gray-500 text-xs">
+                <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-accent flex items-center justify-center text-gray-500 text-xs">
                   Photo
                 </div>
               )}
@@ -350,23 +359,26 @@ function Preview({
               <div className="flex flex-wrap gap-1.5">
                 {interests
                   .filter((i) => i.interest)
-                  .map((interest) => (
-                    <span
-                      key={interest.id}
-                      className="border-2 border-gray-300 px-2 py-1 rounded text-xs inline-flex items-center justify-center leading-none"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        lineHeight: '1',
-                        paddingTop: '7px',
-                        paddingBottom: '13px',
-                        minHeight: '28px',
-                      }}
-                    >
-                      {interest.interest}
-                    </span>
-                  ))}
+                  .map((interest) => {
+                    const Icon = interestIcons[getInterestIconKind(interest.interest)];
+                    return (
+                      <span
+                        key={interest.id}
+                        className="border-2 border-gray-300 px-2 py-1 rounded text-xs inline-flex items-center gap-1.5 leading-none"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          lineHeight: '1',
+                          paddingTop: '7px',
+                          paddingBottom: '13px',
+                          minHeight: '28px',
+                        }}
+                      >
+                        <Icon size={14} className="text-gray-500 flex-shrink-0" />
+                        {interest.interest}
+                      </span>
+                    );
+                  })}
               </div>
             </section>
           </div>
