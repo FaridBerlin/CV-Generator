@@ -6,9 +6,9 @@
   "homepage": "",
   "dependencies": {
     "@react-pdf/renderer": "^4.9.0",
-    "lucide-react": "^0.563.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "uuid": "^14.0.2"
   },
   "scripts": {
@@ -19,7 +19,7 @@
     "test": "vitest run",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\""
   },
   "browserslist": {
@@ -35,25 +35,26 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.4.2",
-    "@testing-library/react": "^14.2.1",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@eslint/js": "^9.39.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "autoprefixer": "^10.4.24",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "gh-pages": "^6.1.1",
+    "globals": "^17.12.0",
     "jsdom": "^27.4.0",
     "postcss": "^8.5.6",
     "prettier": "^3.3.3",
-    "tailwindcss": "^3.4.19",
-    "typescript": "^5.6.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.0",
     "vite": "^8.3.1",
     "vitest": "^5.0.2"
   }
