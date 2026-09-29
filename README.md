@@ -1,28 +1,30 @@
 <h1 align="center">📑 CV Generator Application</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react" alt="React 18.3.1" />
+  <img src="https://img.shields.io/badge/React-19.3.0-61DAFB?logo=react" alt="React 19.3.0" />
+  <img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white" alt="TypeScript 6.0" />
+  <img src="https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite&logoColor=white" alt="Vite 8.3" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License" />
   <img src="https://img.shields.io/badge/Status-Active-success" alt="Status Active" />
 </p>
 
 <p align="center">
-  A modern, responsive CV/Resume creator built with React
+  A modern, responsive CV/Resume creator built with React, TypeScript, and Vite
 </p>
 
 ---
 
 ## 📋 Overview
 
-An interactive React SPA (Single Page Application) for creating professional CVs/Resumes with real-time preview. Add, edit, and delete input fields to personalize your CV, with all changes reflected instantly in the preview. Export your finished CV as a PDF with a single click. Includes an autofill feature for quick preview of a sample CV.
+An interactive React + TypeScript SPA for creating professional CVs/Resumes with real-time preview. Add, edit, and delete input fields to personalize your CV, with all changes reflected instantly in the preview. Export your finished CV as a real, text-based PDF (not a screenshot) with a single click. Includes an autofill feature for quick preview of a sample CV.
 
 ## ✨ Features
 
 - **Real-time Preview** - See your changes reflected instantly
 - **Autofill Functionality** - Preview a pre-filled CV example
 - **Responsive Design** - Works seamlessly on mobile, tablet, and desktop
-- **PDF Export** - Download your CV as a PDF file
-- **Clean UI/UX** - Modern and intuitive interface
+- **Real PDF Export** - Download your CV as a vector PDF with selectable, searchable text (built with `@react-pdf/renderer`, not a rasterized screenshot)
+- **Clean UI/UX** - Modern and intuitive interface, styled with Tailwind CSS
 - **Dynamic Fields** - Add/remove work experience and skills entries
 - **Form Validation** - Built-in input validation
 
@@ -30,29 +32,25 @@ An interactive React SPA (Single Page Application) for creating professional CVs
 
 ### Prerequisites
 
-- Node.js (v16 or higher recommended)
-- npm or yarn
+- Node.js (v20 or higher recommended)
+- npm
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/gianlucajahn/CV-Application.git
-cd CV-Application
+git clone https://github.com/FaridBerlin/CV-Generator.git
+cd CV-Generator
 ```
 
 2. Install dependencies:
 ```bash
 npm install
-# or
-yarn install
 ```
 
 3. Start the development server:
 ```bash
-npm start
-# or
-yarn start
+npm run dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
@@ -61,37 +59,35 @@ yarn start
 
 ```bash
 npm run build
-# or
-yarn build
 ```
 
-The optimized production build will be in the `build/` directory.
+The optimized production build will be in the `dist/` directory.
 
 ### Deployment
 
 Deploy to GitHub Pages:
 ```bash
 npm run deploy
-# or
-yarn deploy
 ```
 
 ## 💻 Technologies Used
 
-- **React 18.3.1** - Modern React with hooks
-- **CSS Modules** - Scoped styling
-- **html2canvas** - Screenshot functionality
-- **jsPDF** - PDF generation
+- **React 19** - Modern React with hooks
+- **TypeScript** - Static typing across the app
+- **Vite** - Dev server and build tooling
+- **Tailwind CSS 4** - Utility-first styling
+- **@react-pdf/renderer** - Real, vector-based PDF generation
+- **Vitest** - Testing
 - **UUID** - Unique identifier generation
-- **React Responsive** - Responsive design utilities
 
 ## 📚 What I Learned
 
 - State management with React Hooks (useState)
 - Functional components and modern React patterns
 - Conditional rendering for responsive layouts
-- External library integration (pdf generation, canvas)
-- CSS Modules for component-scoped styling
+- Generating real, text-based PDFs with a React component tree
+- Migrating a Create React App project to Vite + TypeScript
+- Utility-first styling with Tailwind CSS
 - Form handling and validation in React
 - Mapping over array state for dynamic UI updates
 
@@ -106,9 +102,10 @@ yarn deploy
 
 ## 🔧 Scripts
 
-- `npm start` - Run development server
+- `npm run dev` / `npm start` - Run development server
+- `npm run build` - Type-check and create a production build
+- `npm run preview` - Preview the production build locally
 - `npm test` - Run tests
-- `npm run build` - Create production build
 - `npm run lint` - Lint code
 - `npm run format` - Format code with Prettier
 - `npm run deploy` - Deploy to GitHub Pages
