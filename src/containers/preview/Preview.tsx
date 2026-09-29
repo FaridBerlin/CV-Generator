@@ -180,40 +180,6 @@ function Preview({
         <div className="grid md:grid-cols-2 gap-5 p-5">
           {/* Left Column */}
           <div className="space-y-5">
-            {/* Education */}
-            <section>
-              <h2 className="text-lg font-bold text-accent mb-2 border-b-2 border-accent pb-1">
-                EDUCATION
-              </h2>
-              {education.map((edu) => (
-                <div key={edu.id} className="mb-3">
-                  <h3 className="text-base font-bold leading-tight">{edu.degree || 'Degree'}</h3>
-                  <p className="font-semibold text-sm">{edu.institution || 'Institution'}</p>
-                  <div className="flex flex-wrap justify-between items-center mt-0.5 mb-1">
-                    <p className="text-xs text-accent italic">
-                      {edu.startDate} {edu.startDate && edu.endDate && '-'} {edu.endDate || 'Present'}
-                    </p>
-                    {edu.location && <p className="text-xs text-accent italic">{edu.location}</p>}
-                  </div>
-                  {edu.courses && edu.courses.length > 0 && (
-                    <>
-                      <p className="text-xs font-semibold text-accent mb-1">Courses:</p>
-                      <div className="text-xs space-y-0.5">
-                        {edu.courses.map((course, idx) => (
-                          <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0' }}>
-                            <span style={{ color: '#10b981', marginRight: '4px', lineHeight: '1.2' }}>
-                              •
-                            </span>
-                            <span style={{ flex: 1, lineHeight: '1.2' }}>{course}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </section>
-
             {/* Professional Experience */}
             <section>
               <h2 className="text-lg font-bold text-accent mb-2 border-b-2 border-accent pb-1">
@@ -239,6 +205,40 @@ function Preview({
                               •
                             </span>
                             <span style={{ flex: 1, lineHeight: '1.2' }}>{achievement}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </section>
+
+            {/* Education */}
+            <section>
+              <h2 className="text-lg font-bold text-accent mb-2 border-b-2 border-accent pb-1">
+                EDUCATION
+              </h2>
+              {education.map((edu) => (
+                <div key={edu.id} className="mb-3">
+                  <h3 className="text-base font-bold leading-tight">{edu.degree || 'Degree'}</h3>
+                  <p className="font-semibold text-sm">{edu.institution || 'Institution'}</p>
+                  <div className="flex flex-wrap justify-between items-center mt-0.5 mb-1">
+                    <p className="text-xs text-accent italic">
+                      {edu.startDate} {edu.startDate && edu.endDate && '-'} {edu.endDate || 'Present'}
+                    </p>
+                    {edu.location && <p className="text-xs text-accent italic">{edu.location}</p>}
+                  </div>
+                  {edu.courses && edu.courses.length > 0 && (
+                    <>
+                      <p className="text-xs font-semibold text-accent mb-1">Courses:</p>
+                      <div className="text-xs space-y-0.5">
+                        {edu.courses.map((course, idx) => (
+                          <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0' }}>
+                            <span style={{ color: '#10b981', marginRight: '4px', lineHeight: '1.2' }}>
+                              •
+                            </span>
+                            <span style={{ flex: 1, lineHeight: '1.2' }}>{course}</span>
                           </div>
                         ))}
                       </div>

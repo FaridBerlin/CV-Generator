@@ -1,11 +1,11 @@
 import { StyleSheet } from '@react-pdf/renderer';
 
-// Mirrors the Tailwind palette in tailwind.config.js so the PDF matches the live preview.
+// Mirrors the Tailwind theme in src/globalStyles.css so the PDF matches the live preview.
 export const colors = {
-  primary: '#4d5f9e',
-  primaryDark: '#2d3e6e',
-  accent: '#2abfa2',
-  accentLight: '#85d4a6',
+  primary: '#2abfa2',
+  primaryDark: '#1c8a73',
+  accent: '#4d5f9e',
+  accentLight: '#cdeee2',
   bullet: '#10b981',
   gray: '#4b5563',
   lightGray: '#d1d5db',
