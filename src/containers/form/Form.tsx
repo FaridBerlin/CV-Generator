@@ -582,26 +582,26 @@ function Form({
             </button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="space-y-2">
             {languages.map((lang) => (
               <div key={lang.id} className="flex gap-2">
                 <input
                   type="text"
                   value={lang.language}
                   onChange={(e) => handleLanguageChange(lang.id, 'language', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="English"
                 />
                 <input
                   type="text"
                   value={lang.level}
                   onChange={(e) => handleLanguageChange(lang.id, 'level', e.target.value)}
-                  className="w-20 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-20 flex-shrink-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="B2"
                 />
                 <button
                   onClick={() => removeLanguage(lang.id)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:text-red-700 flex-shrink-0"
                 >
                   <Trash2 size={18} />
                 </button>
