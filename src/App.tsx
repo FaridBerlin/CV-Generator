@@ -322,11 +322,15 @@ function App() {
         'JavaScript',
         'TypeScript',
         'Python',
+        'Go',
+        'Kotlin',
         'PHP',
         'React',
-        'React Native',
         'Vue 3',
         'Next.js',
+        'Mobile Development',
+        'Android Studio',
+        'IntelliJ IDEA',
         'Angular',
         'Astro',
         'Flask',
@@ -405,7 +409,7 @@ function App() {
 
     setLanguages([
       { id: uuidv4(), language: 'Deutsch', level: 'C2' },
-      { id: uuidv4(), language: 'English', level: 'B2' },
+      { id: uuidv4(), language: 'English', level: 'C1' },
     ]);
 
     setInterests([
