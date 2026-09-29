@@ -1,6 +1,16 @@
 import { Document, Page, View, Text, Image } from '@react-pdf/renderer';
-import { styles } from './pdfStyles';
+import { styles, colors } from './pdfStyles';
 import type { CVData } from '../types/cv';
+import { MailIcon, PhoneIcon, PinIcon, LinkIcon, BrainCircuitIcon, Gamepad2Icon, DumbbellIcon, ChessKnightIcon, StarIcon } from './icons';
+import { getInterestIconKind } from '../utils/interestIcon';
+
+const interestIcons = {
+  ai: BrainCircuitIcon,
+  game: Gamepad2Icon,
+  fitness: DumbbellIcon,
+  chess: ChessKnightIcon,
+  default: StarIcon,
+};
 
 const dateRange = (start: string, end: string) => {
   if (!start && !end) return '';
@@ -19,20 +29,44 @@ const BulletList = ({ items }: { items: string[] }) => (
   </>
 );
 
-const Pills = ({ items, outline }: { items: string[]; outline?: boolean }) => (
+const Pills = ({ items }: { items: string[] }) => (
   <View style={styles.pillWrap}>
     {items.map((text, idx) => (
-      <Text key={idx} style={outline ? styles.outlinePill : styles.pill}>
+      <Text key={idx} style={styles.pill}>
         {text}
       </Text>
     ))}
   </View>
 );
 
-const ContactItem = ({ text }: { text: string }) =>
+const InterestPills = ({ items }: { items: string[] }) => (
+  <View style={styles.pillWrap}>
+    {items.map((text, idx) => {
+      const Icon = interestIcons[getInterestIconKind(text)];
+      return (
+        <View key={idx} style={styles.interestPill}>
+          <View style={styles.interestPillIcon}>
+            <Icon size={9} color={colors.gray} />
+          </View>
+          <Text style={styles.interestPillText}>{text}</Text>
+        </View>
+      );
+    })}
+  </View>
+);
+
+const ContactItem = ({
+  text,
+  icon: Icon,
+}: {
+  text: string;
+  icon: typeof MailIcon;
+}) =>
   text ? (
     <View style={styles.contactItem}>
-      <View style={styles.contactDot} />
+      <View style={styles.contactIcon}>
+        <Icon size={9} color="#ffffff" />
+      </View>
       <Text style={styles.contactText}>{text}</Text>
     </View>
   ) : null;
@@ -73,10 +107,10 @@ function CVDocument({
           </View>
 
           <View style={styles.contactBar}>
-            <ContactItem text={personalInfo.email} />
-            <ContactItem text={personalInfo.phone} />
-            <ContactItem text={personalInfo.address} />
-            <ContactItem text={personalInfo.github} />
+            <ContactItem text={personalInfo.email} icon={MailIcon} />
+            <ContactItem text={personalInfo.phone} icon={PhoneIcon} />
+            <ContactItem text={personalInfo.address} icon={PinIcon} />
+            <ContactItem text={personalInfo.github} icon={LinkIcon} />
           </View>
         </View>
 
@@ -189,7 +223,7 @@ function CVDocument({
             {filledInterests.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Interests</Text>
-                <Pills items={filledInterests} outline />
+                <InterestPills items={filledInterests} />
               </View>
             )}
           </View>

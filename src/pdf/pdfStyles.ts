@@ -56,6 +56,8 @@ export const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     objectFit: 'cover',
+    borderWidth: 3,
+    borderColor: colors.accent,
   },
   photoPlaceholder: {
     width: 64,
@@ -64,6 +66,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#9ca3af',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: colors.accent,
   },
   photoPlaceholderText: {
     fontSize: 7,
@@ -84,11 +88,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
-  contactDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.accentLight,
+  contactIcon: {
     marginRight: 5,
   },
   contactText: {
@@ -193,6 +193,24 @@ export const styles = StyleSheet.create({
     borderRadius: 3,
     marginRight: 6,
     marginBottom: 6,
+  },
+  interestPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 3,
+    marginRight: 6,
+    marginBottom: 6,
+  },
+  interestPillIcon: {
+    marginRight: 5,
+  },
+  interestPillText: {
+    fontSize: 8,
+    color: '#1f2937',
   },
   languageGrid: {
     flexDirection: 'row',
