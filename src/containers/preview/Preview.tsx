@@ -41,7 +41,7 @@ function Preview({
               <h1 className="text-3xl font-bold mb-1">
                 {personalInfo.firstName} {personalInfo.lastName}
               </h1>
-              <p className="text-accent-light text-base mb-2 uppercase">
+              <p className="text-accent text-base mb-2 uppercase">
                 {personalInfo.title || 'YOUR TITLE'}
               </p>
               <p className="text-xs leading-snug max-w-2xl">
