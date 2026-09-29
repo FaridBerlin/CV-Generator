@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 11,
-    color: colors.accentLight,
+    color: colors.accent,
     textTransform: 'uppercase',
     marginBottom: 6,
     letterSpacing: 0.5,
