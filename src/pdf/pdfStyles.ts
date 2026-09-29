@@ -101,13 +101,12 @@ export const styles = StyleSheet.create({
   },
   column: {
     flex: 1,
+    gap: 14,
   },
   columnGap: {
     width: 24,
   },
-  section: {
-    marginBottom: 14,
-  },
+  section: {},
   sectionTitle: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 12,
