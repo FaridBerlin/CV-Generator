@@ -1,5 +1,7 @@
 import { Document, Page, View, Text, Image } from '@react-pdf/renderer';
-import { styles, colors } from './pdfStyles';
+import { createPdfStyles, colors } from './pdfStyles';
+import { getTheme } from '../theme/cvThemes';
+import type { CvTheme } from '../theme/cvThemes';
 import type { CVData } from '../types/cv';
 import { MailIcon, PhoneIcon, PinIcon, LinkIcon, BrainCircuitIcon, Gamepad2Icon, DumbbellIcon, ChessKnightIcon, StarIcon } from './icons';
 import { getInterestIconKind } from '../utils/interestIcon';
@@ -18,7 +20,9 @@ const dateRange = (start: string, end: string) => {
   return start || end;
 };
 
-const BulletList = ({ items }: { items: string[] }) => (
+type Styles = ReturnType<typeof createPdfStyles>;
+
+const BulletList = ({ items, styles }: { items: string[]; styles: Styles }) => (
   <View style={styles.bulletList}>
     {items.map((item, idx) => (
       <View style={styles.bulletRow} key={idx}>
@@ -29,7 +33,7 @@ const BulletList = ({ items }: { items: string[] }) => (
   </View>
 );
 
-const Pills = ({ items }: { items: string[] }) => (
+const Pills = ({ items, styles }: { items: string[]; styles: Styles }) => (
   <View style={styles.pillWrap}>
     {items.map((text, idx) => (
       <Text key={idx} style={styles.pill}>
@@ -39,7 +43,7 @@ const Pills = ({ items }: { items: string[] }) => (
   </View>
 );
 
-const InterestPills = ({ items }: { items: string[] }) => (
+const InterestPills = ({ items, styles }: { items: string[]; styles: Styles }) => (
   <View style={styles.pillWrap}>
     {items.map((text, idx) => {
       const Icon = interestIcons[getInterestIconKind(text)];
@@ -58,20 +62,25 @@ const InterestPills = ({ items }: { items: string[] }) => (
 const ContactItem = ({
   text,
   icon: Icon,
+  styles,
+  color,
 }: {
   text: string;
   icon: typeof MailIcon;
+  styles: Styles;
+  color: string;
 }) =>
   text ? (
     <View style={styles.contactItem}>
       <View style={styles.contactIcon}>
-        <Icon size={9} color="#ffffff" />
+        <Icon size={9} color={color} />
       </View>
       <Text style={styles.contactText}>{text}</Text>
     </View>
   ) : null;
 
 function CVDocument({
+  theme: themeProp,
   personalInfo,
   education,
   experience,
@@ -79,7 +88,9 @@ function CVDocument({
   projects,
   languages,
   interests,
-}: CVData) {
+}: CVData & { theme?: CvTheme }) {
+  const theme = themeProp ?? getTheme(null);
+  const styles = createPdfStyles(theme);
   const filledSkills = skills.filter((s) => s.skill).map((s) => s.skill);
   const filledInterests = interests.filter((i) => i.interest).map((i) => i.interest);
   const filledLanguages = languages.filter((l) => l.language);
@@ -107,10 +118,10 @@ function CVDocument({
           </View>
 
           <View style={styles.contactBar}>
-            <ContactItem text={personalInfo.email} icon={MailIcon} />
-            <ContactItem text={personalInfo.phone} icon={PhoneIcon} />
-            <ContactItem text={personalInfo.address} icon={PinIcon} />
-            <ContactItem text={personalInfo.github} icon={LinkIcon} />
+            <ContactItem styles={styles} color={theme.onPrimary} text={personalInfo.email} icon={MailIcon} />
+            <ContactItem styles={styles} color={theme.onPrimary} text={personalInfo.phone} icon={PhoneIcon} />
+            <ContactItem styles={styles} color={theme.onPrimary} text={personalInfo.address} icon={PinIcon} />
+            <ContactItem styles={styles} color={theme.onPrimary} text={personalInfo.github} icon={LinkIcon} />
           </View>
         </View>
 
@@ -132,7 +143,7 @@ function CVDocument({
                     {exp.achievements && exp.achievements.length > 0 && (
                       <>
                         <Text style={styles.entryLabel}>Achievements/Tasks:</Text>
-                        <BulletList items={exp.achievements} />
+                        <BulletList styles={styles} items={exp.achievements} />
                       </>
                     )}
                   </View>
@@ -154,7 +165,7 @@ function CVDocument({
                     {edu.courses && edu.courses.length > 0 && (
                       <>
                         <Text style={styles.entryLabel}>Courses:</Text>
-                        <BulletList items={edu.courses} />
+                        <BulletList styles={styles} items={edu.courses} />
                       </>
                     )}
                   </View>
@@ -170,7 +181,7 @@ function CVDocument({
             {filledSkills.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Skills</Text>
-                <Pills items={filledSkills} />
+                <Pills styles={styles} items={filledSkills} />
               </View>
             )}
 
@@ -188,7 +199,7 @@ function CVDocument({
                         </Text>
                       ) : null}
                       {project.features && project.features.length > 0 && (
-                        <BulletList items={project.features} />
+                        <BulletList styles={styles} items={project.features} />
                       )}
                       {project.role ? (
                         <Text style={styles.inlineRow}>
@@ -231,7 +242,7 @@ function CVDocument({
             {filledInterests.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Interests</Text>
-                <InterestPills items={filledInterests} />
+                <InterestPills styles={styles} items={filledInterests} />
               </View>
             )}
           </View>

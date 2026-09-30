@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Form from './containers/form/Form';
 import Preview from './containers/preview/Preview';
 import { v4 as uuidv4 } from 'uuid';
+import { getTheme, DEFAULT_THEME_ID, cvThemes } from './theme/cvThemes';
 import MobileToggle from './components/MobileToggle/MobileToggle';
 import type {
   PersonalInfo,
@@ -66,6 +67,8 @@ const initializeLanguages = (): Language[] => [{ id: uuidv4(), language: '', lev
 
 const initializeInterests = (): Interest[] => [{ id: uuidv4(), interest: '' }];
 
+const THEME_KEY = 'cv-theme';
+
 function App() {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(initializePersonalInfo());
   const [education, setEducation] = useState<Education[]>(initializeEducation());
@@ -75,6 +78,25 @@ function App() {
   const [languages, setLanguages] = useState<Language[]>(initializeLanguages());
   const [interests, setInterests] = useState<Interest[]>(initializeInterests());
   const [mobile, setMobile] = useState<MobileState>({ formIsOpen: true });
+
+  const [themeId, setThemeId] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      return cvThemes.some((t) => t.id === saved) ? (saved as string) : DEFAULT_THEME_ID;
+    } catch {
+      return DEFAULT_THEME_ID;
+    }
+  });
+  const theme = getTheme(themeId);
+
+  const handleThemeChange = (id: string) => {
+    setThemeId(id);
+    try {
+      localStorage.setItem(THEME_KEY, id);
+    } catch {
+      // storage unavailable; the theme just won't persist
+    }
+  };
 
   const handleToggle = () => {
     setMobile((prev) => ({ formIsOpen: !prev.formIsOpen }));
@@ -429,6 +451,7 @@ function App() {
       ]);
       const doc = (
         <CVDocument
+          theme={theme}
           personalInfo={personalInfo}
           education={education}
           experience={experience}
@@ -455,9 +478,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-950 [color-scheme:dark]">
       <div className="max-w-[2200px] mx-auto py-6 px-4 lg:px-6 lg:grid lg:grid-cols-[minmax(360px,1fr)_minmax(400px,1fr)] lg:gap-6">
         <Form
+          themeId={themeId}
+          onThemeChange={handleThemeChange}
           printDocument={printDocument}
           mobile={mobile}
           autoFill={autoFill}
@@ -490,6 +515,7 @@ function App() {
           handleInterestChange={handleInterestChange}
         />
         <Preview
+          theme={theme}
           mobile={mobile}
           personalInfo={personalInfo}
           education={education}

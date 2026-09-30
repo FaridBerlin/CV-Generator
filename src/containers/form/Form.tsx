@@ -1,4 +1,4 @@
-import { Trash2, Plus, Download, Sparkles } from 'lucide-react';
+import { Trash2, Plus, Download, Sparkles, Check } from 'lucide-react';
 import type {
   PersonalInfo,
   Education,
@@ -9,8 +9,11 @@ import type {
   Interest,
   MobileState,
 } from '../../types/cv';
+import { cvThemes } from '../../theme/cvThemes';
 
 interface FormProps {
+  themeId: string;
+  onThemeChange: (id: string) => void;
   mobile: MobileState;
   autoFill: () => void;
   printDocument: () => void;
@@ -51,6 +54,8 @@ interface FormProps {
 }
 
 function Form({
+  themeId,
+  onThemeChange,
   mobile,
   autoFill,
   printDocument,
@@ -84,7 +89,7 @@ function Form({
 }: FormProps) {
   return (
     <div className={mobile.formIsOpen ? 'block' : 'hidden lg:block'}>
-      <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
+      <div className="bg-white text-gray-900 [color-scheme:light] rounded-lg shadow-xl ring-1 ring-white/15 p-6 space-y-6">
         {/* Header with Actions */}
         <div className="flex justify-between items-center border-b border-gray-200 pb-4">
           <h1 className="text-2xl font-bold text-primary">CV Generator</h1>
@@ -105,6 +110,29 @@ function Form({
             </button>
           </div>
         </div>
+
+        {/* CV Color */}
+        <section className="space-y-2">
+          <h2 className="text-sm font-semibold text-gray-700">CV Color</h2>
+          <div className="flex flex-wrap gap-2">
+            {cvThemes.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                title={t.label}
+                aria-label={t.label}
+                aria-pressed={themeId === t.id}
+                onClick={() => onThemeChange(t.id)}
+                style={{ backgroundColor: t.primary }}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-900 ${
+                  themeId === t.id ? 'ring-2 ring-offset-2 ring-gray-900' : 'hover:scale-110'
+                }`}
+              >
+                {themeId === t.id && <Check size={16} strokeWidth={3} />}
+              </button>
+            ))}
+          </div>
+        </section>
 
         {/* Personal Information */}
         <section className="space-y-4">

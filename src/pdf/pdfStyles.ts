@@ -1,24 +1,32 @@
 import { StyleSheet } from '@react-pdf/renderer';
+import type { CvTheme } from '../theme/cvThemes';
 
-// Mirrors the Tailwind theme in src/globalStyles.css so the PDF matches the live preview.
+// Neutral colors that are not part of the CV theme.
 export const colors = {
-  primary: '#2abfa2',
-  primaryDark: '#1c8a73',
-  accent: '#4d5f9e',
-  accentLight: '#cdeee2',
-  bullet: '#10b981',
   gray: '#4b5563',
   lightGray: '#d1d5db',
 };
 
-export const styles = StyleSheet.create({
+const cache = new Map<string, ReturnType<typeof build>>();
+
+export const createPdfStyles = (theme: CvTheme) => {
+  let styles = cache.get(theme.id);
+  if (!styles) {
+    styles = build(theme);
+    cache.set(theme.id, styles);
+  }
+  return styles;
+};
+
+const build = (theme: CvTheme) =>
+  StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
     fontSize: 9,
     color: '#1f2937',
   },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.primary,
     paddingTop: 20,
     paddingHorizontal: 24,
     paddingBottom: 14,
@@ -35,13 +43,13 @@ export const styles = StyleSheet.create({
   name: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 22,
-    color: '#ffffff',
+    color: theme.onPrimary,
     marginBottom: 2,
   },
   title: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 11,
-    color: colors.accent,
+    color: theme.headerSubtle,
     textTransform: 'uppercase',
     marginBottom: 6,
     letterSpacing: 0.5,
@@ -49,7 +57,7 @@ export const styles = StyleSheet.create({
   bio: {
     fontSize: 8.5,
     lineHeight: 1.4,
-    color: '#ffffff',
+    color: theme.onPrimary,
   },
   photo: {
     width: 64,
@@ -57,7 +65,7 @@ export const styles = StyleSheet.create({
     borderRadius: 32,
     objectFit: 'cover',
     borderWidth: 3,
-    borderColor: colors.accent,
+    borderColor: theme.accent,
   },
   photoPlaceholder: {
     width: 64,
@@ -67,14 +75,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: colors.accent,
+    borderColor: theme.accent,
   },
   photoPlaceholderText: {
     fontSize: 7,
     color: '#ffffff',
   },
   contactBar: {
-    backgroundColor: colors.primaryDark,
+    backgroundColor: theme.primaryDark,
     marginTop: 14,
     marginHorizontal: -24,
     marginBottom: -14,
@@ -93,7 +101,7 @@ export const styles = StyleSheet.create({
   },
   contactText: {
     fontSize: 8,
-    color: '#ffffff',
+    color: theme.onPrimary,
   },
   body: {
     flexDirection: 'row',
@@ -110,12 +118,12 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 12,
-    color: colors.accent,
+    color: theme.accent,
     textTransform: 'uppercase',
     paddingBottom: 3,
     marginBottom: 8,
     borderBottomWidth: 1.5,
-    borderBottomColor: colors.accent,
+    borderBottomColor: theme.accent,
   },
   entryList: {
     gap: 10,
@@ -139,12 +147,12 @@ export const styles = StyleSheet.create({
   entryMeta: {
     fontFamily: 'Helvetica-Oblique',
     fontSize: 8,
-    color: colors.accent,
+    color: theme.accent,
   },
   entryLabel: {
     fontFamily: 'Helvetica-Bold',
     fontSize: 8,
-    color: colors.accent,
+    color: theme.accent,
     marginBottom: 3,
   },
   entryDetails: {
@@ -158,7 +166,7 @@ export const styles = StyleSheet.create({
   },
   bulletDot: {
     fontSize: 8,
-    color: colors.bullet,
+    color: theme.bullet,
     marginRight: 4,
   },
   bulletText: {
@@ -180,8 +188,8 @@ export const styles = StyleSheet.create({
     rowGap: 6,
   },
   pill: {
-    backgroundColor: colors.primary,
-    color: '#ffffff',
+    backgroundColor: theme.primary,
+    color: theme.onPrimary,
     fontSize: 8,
     paddingVertical: 4,
     paddingHorizontal: 8,

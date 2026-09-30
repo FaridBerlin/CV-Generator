@@ -6,3 +6,9 @@
   --color-accent: #4d5f9e;
   --color-accent-light: #cdeee2;
 }
+
+html,
+body {
+  background: #0a0a0a;
+  color-scheme: dark;
+}
