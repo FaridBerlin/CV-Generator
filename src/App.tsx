@@ -456,7 +456,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-8 px-4 grid lg:grid-cols-2 gap-8">
+      <div className="max-w-[2200px] mx-auto py-6 px-4 lg:px-6 lg:grid lg:grid-cols-[minmax(360px,1fr)_minmax(400px,1fr)] lg:gap-6">
         <Form
           printDocument={printDocument}
           mobile={mobile}
