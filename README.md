@@ -12,14 +12,38 @@
   A modern, responsive CV/Resume creator built with React, TypeScript, and Vite
 </p>
 
+<p align="center">
+  <a href="https://faridberlin.github.io/CV-Generator/"><b>🚀 Try the live demo</b></a>
+</p>
+
+<p align="center">
+  <img src="docs/demo.gif" alt="CV Generator demo: click AutoFill and the A4 preview fills instantly" width="850" />
+</p>
+
 ---
 
 ## 📋 Overview
 
 An interactive React + TypeScript SPA for creating professional CVs/Resumes with real-time preview. Add, edit, and delete input fields to personalize your CV, with all changes reflected instantly in the preview. Export your finished CV as a real, text-based PDF (not a screenshot) with a single click. Includes an autofill feature for quick preview of a sample CV.
 
+## 📸 Screenshots
+
+**Edit on the left, see your A4 CV update live on the right**
+
+<p align="center">
+  <img src="docs/editor-filled.png" alt="CV Generator editor with a filled-in CV and live A4 preview" width="850" />
+</p>
+
+**Pick a color theme: it applies to the preview and the downloaded PDF**
+
+<p align="center">
+  <img src="docs/color-themes.png" alt="The same CV in teal, dark blue, black and burgundy themes" width="850" />
+</p>
+
 ## ✨ Features
 
+- **Live A4 Preview** - A true A4 sheet that scales to fit your screen, with page-break guides
+- **12 Color Themes** - Choose your CV color; it applies to both the preview and the PDF, and is remembered between visits
 - **Real-time Preview** - See your changes reflected instantly
 - **Autofill Functionality** - Preview a pre-filled CV example
 - **Responsive Design** - Works seamlessly on mobile, tablet, and desktop
