@@ -9,6 +9,8 @@ import type {
   Interest,
   MobileState,
 } from '../../types/cv';
+import type { CSSProperties } from 'react';
+import type { CvTheme } from '../../theme/cvThemes';
 import A4Scaler from './A4Scaler';
 import './Preview.css';
 import { getInterestIconKind } from '../../utils/interestIcon';
@@ -23,6 +25,7 @@ const interestIcons = {
 
 interface PreviewProps {
   mobile: MobileState;
+  theme: CvTheme;
   personalInfo: PersonalInfo;
   education: Education[];
   experience: Experience[];
@@ -53,7 +56,7 @@ const ContactItem = ({ text, icon: Icon }: { text: string; icon: typeof Mail }) 
   text ? (
     <div className="cv-contact-item">
       <span className="cv-contact-icon">
-        <Icon size="9pt" fill="white" stroke="white" />
+        <Icon size="9pt" fill="currentColor" stroke="currentColor" />
       </span>
       <span className="cv-contact-text">{text}</span>
     </div>
@@ -61,6 +64,7 @@ const ContactItem = ({ text, icon: Icon }: { text: string; icon: typeof Mail }) 
 
 function Preview({
   mobile,
+  theme,
   personalInfo,
   education,
   experience,
@@ -73,9 +77,19 @@ function Preview({
   const filledLanguages = languages.filter((l) => l.language);
   const filledInterests = interests.filter((i) => i.interest);
 
+  const themeVars = {
+    '--cv-primary': theme.primary,
+    '--cv-primary-dark': theme.primaryDark,
+    '--cv-accent': theme.accent,
+    '--cv-bullet': theme.bullet,
+    '--cv-on-primary': theme.onPrimary,
+    '--cv-header-subtle': theme.headerSubtle,
+  } as CSSProperties;
+
   return (
     <div
-      className={`${mobile.formIsOpen ? 'hidden lg:block' : 'block'} lg:sticky lg:top-4 lg:self-start lg:max-h-[calc(100vh-2rem)] lg:overflow-auto bg-gray-200 p-[16px] rounded-lg min-w-0`}
+      style={themeVars}
+      className={`${mobile.formIsOpen ? 'hidden lg:block' : 'block'} lg:sticky lg:top-4 lg:self-start lg:max-h-[calc(100vh-2rem)] lg:overflow-auto bg-neutral-800 border border-neutral-700 shadow-xl p-[16px] rounded-lg min-w-0`}
       id="preview"
     >
       <A4Scaler>
