@@ -1,346 +1,42 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { CVData } from '../types/cv';
 import type { Lang } from './translations';
+import { decryptJson } from './sampleCrypto';
+import type { EncryptedBlob } from './sampleCrypto';
+import encryptedSample from './sampleData.enc.json';
 
-const skillList = (items: string[]) => items.map((skill) => ({ id: uuidv4(), skill }));
+type WithoutId<T> = Omit<T, 'id'>;
 
-const sampleEn = (): CVData => ({
-  personalInfo: {
-    firstName: 'Farid',
-    lastName: 'Hima',
-    title: 'Full Stack Web Developer',
-    bio: 'Fullstack Web Developer with 2+ years of experience in Amazon FBA e-commerce and a completed 1.5 year MERN fullstack program at DCI Berlin (graduated April 2026). Hands on experience building real time interaction platforms with Vue 3 and Socket.io. I combine analytical thinking, technical expertise, and a solution oriented mindset ready to contribute from day one.',
-    email: '****unterf@gmail.com',
-    phone: '017679******',
-    address: 'Berlin, Germany',
-    github: 'github.com/FaridBerlin',
-    profileImage: null,
-  },
-  education: [
-    {
-      id: uuidv4(),
-      degree: 'Fullstack Web Development',
-      institution: 'DCI Digital Career Institute GmbH',
-      startDate: '10/2024',
-      endDate: '04/2026',
-      location: 'Berlin',
-      courses: [
-        'Comprehensive MERN Stack training (MongoDB, Express.js, React, Node.js)',
-        'Developed multiple real-world fullstack projects',
-        'English language training (C1 level)',
-        'AI automation and AI agent creation',
-      ],
-    },
-  ],
-  experience: [
-    {
-      id: uuidv4(),
-      position: 'Fullstack Developer Intern',
-      company: 'Crowds',
-      startDate: '03/2026',
-      endDate: '06/2026',
-      location: 'Berlin',
-      achievements: [
-        'Took ownership of backend development in a team of 3 developers',
-        'Designed and implemented a real-time backend using Node.js, Express, and Socket.io',
-        'Built RESTful APIs, implemented JWT authentication, and defined MongoDB data models',
-        'Ensured seamless integration between frontend and backend systems',
-        'Contributed to frontend development using Vue 3, Pinia, and Vite',
-        'Collaborated in an agile team using Git workflows',
-      ],
-    },
-    {
-      id: uuidv4(),
-      position: 'Amazon FBA Manager',
-      company: 'IIIHT',
-      startDate: '10/2021',
-      endDate: '02/2024',
-      location: 'Berlin',
-      achievements: [
-        'Optimized product listings and advertising campaigns for tech products',
-        'Managed inventory, logistics, and supply chain processes',
-        'Conducted market and competitor analysis to increase sales performance',
-      ],
-    },
-    {
-      id: uuidv4(),
-      position: 'Personal Trainer & Influencer',
-      company: 'Berlin',
-      startDate: '06/2011',
-      endDate: '12/2022',
-      location: 'Berlin',
-      achievements: [
-        'Built YouTube channel (Farid Berlin) to 180,000 subscribers',
-        'Sponsored by Olimp Sport Nutrition (2013–2020)',
-        'Winner of IFBB Fit Model Belgium (2019)',
-      ],
-    },
-  ],
-  skills: skillList([
-    'JavaScript',
-    'TypeScript',
-    'Python',
-    'Go',
-    'Kotlin',
-    'PHP',
-    'React',
-    'Vue 3',
-    'Next.js',
-    'Mobile Development',
-    'Android Studio',
-    'IntelliJ IDEA',
-    'Angular',
-    'Astro',
-    'Flask',
-    'Django',
-    'Node.js',
-    'Express.js',
-    'JWT',
-    'Socket.io',
-    'MongoDB',
-    'MySQL',
-    'Docker',
-    'Nginx',
-    'Git',
-    'GitHub',
-    'Linux',
-    'Hetzner VPS',
-    'Postman',
-    'AI Integration',
-    'Ollama',
-    'LLM',
-    'LLM Integration',
-    'n8n',
-    'Zapier',
-    'Tailwind CSS',
-    'MJML',
-    'HTML',
-    'CSS',
-  ]),
-  projects: [
-    {
-      id: uuidv4(),
-      name: 'NutriVa – AI-Powered Nutrition App',
-      stack: '',
-      features: [
-        'Led a 4-person development team',
-        'Built AI-driven meal planning features',
-        'Implemented tracking and dashboard functionality',
-      ],
-      role: '',
-      deployment: 'Hetzner VPS with Nginx',
-      liveUrl: '',
-    },
-    {
-      id: uuidv4(),
-      name: 'Portfolio Website',
-      stack: 'React, Tailwind CSS, Vite, React Three Fiber',
-      features: ['Integrated 3D elements'],
-      role: '',
-      deployment: 'GitHub Pages',
-      liveUrl: '',
-    },
-    {
-      id: uuidv4(),
-      name: 'Weather App & Weather Flask & Docker',
-      stack: '',
-      features: [
-        'JS/TS version: real-time weather via OpenWeather API',
-        'Python/Flask/Docker version: containerised API integration',
-      ],
-      role: '',
-      deployment: '',
-      liveUrl: '',
-    },
-    {
-      id: uuidv4(),
-      name: 'Space Invader Game',
-      stack: 'Classic arcade game built with JavaScript and Canvas',
-      features: ['Focus on game logic and animation'],
-      role: '',
-      deployment: 'GitHub Pages',
-      liveUrl: '',
-    },
-  ],
-  languages: [
-    { id: uuidv4(), language: 'Deutsch', level: 'C2' },
-    { id: uuidv4(), language: 'English', level: 'C1' },
-  ],
-  interests: [
-    { id: uuidv4(), interest: 'AI Automation' },
-    { id: uuidv4(), interest: 'Game Dev' },
-    { id: uuidv4(), interest: 'Fitness' },
-    { id: uuidv4(), interest: 'Chess' },
-  ],
+/** The stored shape: no ids, and flat string lists for skills and interests. */
+export interface SampleContent {
+  personalInfo: CVData['personalInfo'];
+  education: WithoutId<CVData['education'][number]>[];
+  experience: WithoutId<CVData['experience'][number]>[];
+  skills: string[];
+  projects: WithoutId<CVData['projects'][number]>[];
+  languages: WithoutId<CVData['languages'][number]>[];
+  interests: string[];
+}
+
+type SampleSet = Record<Lang, SampleContent>;
+
+const withIds = <T extends object>(items: T[]) => items.map((item) => ({ id: uuidv4(), ...item }));
+
+const hydrate = (c: SampleContent): CVData => ({
+  personalInfo: c.personalInfo,
+  education: withIds(c.education),
+  experience: withIds(c.experience),
+  skills: c.skills.map((skill) => ({ id: uuidv4(), skill })),
+  projects: withIds(c.projects),
+  languages: withIds(c.languages),
+  interests: c.interests.map((interest) => ({ id: uuidv4(), interest })),
 });
 
-// Mirrors the German CV (CV-De-26.pdf).
-const sampleDe = (): CVData => ({
-  personalInfo: {
-    firstName: 'Farid',
-    lastName: 'Hima',
-    title: 'Fullstack-Webentwickler',
-    bio: 'Fullstack-Webentwickler mit 2+ Jahren Erfahrung im Amazon-FBA-E-Commerce-Bereich und abgeschlossener 1,5-jähriger MERN-Weiterbildung am DCI Berlin (Abschluss April 2026). Praktische Erfahrung in der Entwicklung von Echtzeit-Interaktionsplattformen mit Vue 3 und Socket.io. Ich verbinde analytisches Denken, technische Kompetenz und einen lösungsorientierten Ansatz – und bin bereit, vom ersten Tag an einen Beitrag zu leisten.',
-    email: '****unterf@gmail.com',
-    phone: '017679******',
-    address: 'Berlin, Deutschland',
-    github: 'github.com/FaridBerlin',
-    profileImage: null,
-  },
-  education: [
-    {
-      id: uuidv4(),
-      degree: 'Fullstack-Webentwicklung',
-      institution: 'DCI Digital Career Institute GmbH, Berlin',
-      startDate: '10/2024',
-      endDate: '04/2026',
-      location: '',
-      courses: [
-        'Entwicklung mehrerer praxisnaher Fullstack-Projekte.',
-        'Englischtraining (C1-Niveau).',
-        'KI-Automation und KI-Agent-Erstellung.',
-      ],
-    },
-  ],
-  experience: [
-    {
-      id: uuidv4(),
-      position: 'Praktikum als Fullstack Entwickler',
-      company: 'Crowds, Berlin',
-      startDate: '03/2026',
-      endDate: '06/2026',
-      location: '',
-      achievements: [
-        'Übernahme der Verantwortung für die Backend-Entwicklung in einem Team von drei Entwicklern',
-        'Konzeption und Implementierung eines Echtzeit-Backends mit Node.js, Express und Socket.io',
-        'Entwicklung von RESTful APIs, Implementierung von Authentifizierung (JWT) sowie Datenbankmodellen mit MongoDB',
-        'Sicherstellung einer nahtlosen Integration zwischen Frontend- und Backend-Systemen',
-        'Mitwirkung an der Frontend-Entwicklung mit Vue 3, Pinia und Vite',
-        'Zusammenarbeit in einem agilen Team unter Verwendung von Git-Workflows',
-      ],
-    },
-    {
-      id: uuidv4(),
-      position: 'Amazon FBA Manager',
-      company: 'IIIHT, Berlin',
-      startDate: '10/2021',
-      endDate: '02/2024',
-      location: 'Berlin',
-      achievements: [
-        'Optimierung von Produktlistings und Werbekampagnen',
-        'Verwaltung von Lagerbeständen und Lieferketten',
-        'Durchführung von Markt- und Wettbewerbsanalysen',
-      ],
-    },
-    {
-      id: uuidv4(),
-      position: 'Personal Trainer & Influencer',
-      company: 'Berlin',
-      startDate: '06/2011',
-      endDate: '12/2022',
-      location: '',
-      achievements: [
-        'YouTube-Kanal (Farid Berlin) mit 180.000 Abonnenten aufgebaut',
-        'Sponsoring durch Olimp Sport Nutrition',
-      ],
-    },
-  ],
-  skills: skillList([
-    'JavaScript',
-    'TypeScript',
-    'Python',
-    'Go',
-    'Kotlin',
-    'PHP',
-    'React',
-    'React Native',
-    'Vue 3',
-    'Next.js',
-    'Mobile Development',
-    'Flask',
-    'Django',
-    'Node.js',
-    'Express.js',
-    'JWT',
-    'MongoDB',
-    'MySQL',
-    'Docker',
-    'Git',
-    'GitHub',
-    'Nginx',
-    'Postman',
-    'KI-Integration',
-    'Ollama',
-    'LLM',
-    'LLM-Integration',
-    'n8n',
-    'Zapier',
-    'Astro',
-    'Tailwind CSS',
-    'Angular',
-    'Linux',
-    'Hetzner VPS',
-    'MJML',
-    'HTML',
-    'CSS',
-  ]),
-  projects: [
-    {
-      id: uuidv4(),
-      name: 'NutriVa – KI-gestützte Ernährungs-App',
-      stack: '',
-      features: [
-        'Leitung eines 4-köpfigen Entwicklerteams',
-        'Entwicklung von KI-gestützter Ernährungsplanung',
-        'Umsetzung von Tracking- und Dashboard-Funktionen',
-        'Deployment auf Hetzner VPS mit Nginx',
-      ],
-      role: '',
-      deployment: '',
-      liveUrl: '',
-    },
-    {
-      id: uuidv4(),
-      name: 'Portfolio Website',
-      stack: '',
-      features: [
-        'Entwicklung mit React, Tailwind CSS und Vite',
-        'Integration von 3D-Elementen',
-        'Deployment: GitHub Pages',
-      ],
-      role: '',
-      deployment: '',
-      liveUrl: '',
-    },
-    {
-      id: uuidv4(),
-      name: 'Weather Flask & Docker',
-      stack: '',
-      features: ['Backend-Entwicklung mit Flask und Docker API-Integration'],
-      role: '',
-      deployment: '',
-      liveUrl: '',
-    },
-    {
-      id: uuidv4(),
-      name: 'Space Invader Game',
-      stack: '',
-      features: ['Entwicklung mit JavaScript und Canvas', 'Fokus auf Spiellogik und Animation'],
-      role: '',
-      deployment: '',
-      liveUrl: '',
-    },
-  ],
-  languages: [
-    { id: uuidv4(), language: 'Deutsch', level: 'C2' },
-    { id: uuidv4(), language: 'English', level: 'C1' },
-  ],
-  interests: [
-    { id: uuidv4(), interest: 'KI-Automatisierung' },
-    { id: uuidv4(), interest: 'Spieleentwicklung' },
-    { id: uuidv4(), interest: 'Sport' },
-    { id: uuidv4(), interest: 'Schach' },
-  ],
-});
-
-export const getSampleData = (lang: Lang): CVData => (lang === 'de' ? sampleDe() : sampleEn());
+/**
+ * Decrypts the sample CV for `lang`. Resolves to null when `answer` is wrong.
+ * The plaintext lives only in the git-ignored private/sample-data.json.
+ */
+export async function getSampleData(lang: Lang, answer: string): Promise<CVData | null> {
+  const set = await decryptJson<SampleSet>(encryptedSample as EncryptedBlob, answer);
+  return set ? hydrate(set[lang]) : null;
+}

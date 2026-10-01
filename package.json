@@ -21,7 +21,8 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "lint": "eslint src",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
+    "encrypt-sample": "node --no-warnings scripts/encrypt-sample.mjs"
   },
   "browserslist": {
     "production": [
