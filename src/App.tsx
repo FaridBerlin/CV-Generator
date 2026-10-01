@@ -8,6 +8,7 @@ import { LanguageContext } from './i18n/LanguageContext';
 import { translations, LANGS, DEFAULT_LANG } from './i18n/translations';
 import type { Lang } from './i18n/translations';
 import { getSampleData } from './i18n/sampleData';
+import AutoFillDialog from './components/AutoFillDialog/AutoFillDialog';
 import type {
   PersonalInfo,
   Education,
@@ -315,9 +316,12 @@ function App() {
     setInterests((prev) => prev.map((int) => (int.id === id ? { ...int, interest: value } : int)));
   };
 
-  // Autofill with sample data in the selected language
-  const autoFill = () => {
-    const data = getSampleData(lang);
+  // The sample CV is encrypted; the dialog's answer is the key
+  const [autoFillOpen, setAutoFillOpen] = useState(false);
+
+  const submitAutoFill = async (answer: string) => {
+    const data = await getSampleData(lang, answer);
+    if (!data) return false;
     setPersonalInfo(data.personalInfo);
     setEducation(data.education);
     setExperience(data.experience);
@@ -325,6 +329,8 @@ function App() {
     setProjects(data.projects);
     setLanguages(data.languages);
     setInterests(data.interests);
+    setAutoFillOpen(false);
+    return true;
   };
 
   // Generate and download the CV as a real, text-based PDF
@@ -376,7 +382,7 @@ function App() {
             onThemeChange={handleThemeChange}
             printDocument={printDocument}
             mobile={mobile}
-            autoFill={autoFill}
+            autoFill={() => setAutoFillOpen(true)}
             personalInfo={personalInfo}
             handlePersonalInfoChange={handlePersonalInfoChange}
             handleImageUpload={handleImageUpload}
@@ -418,6 +424,9 @@ function App() {
           />
         </div>
         <MobileToggle handleToggle={handleToggle} mobile={mobile} />
+        {autoFillOpen && (
+          <AutoFillDialog onSubmit={submitAutoFill} onClose={() => setAutoFillOpen(false)} />
+        )}
       </div>
     </LanguageContext.Provider>
   );

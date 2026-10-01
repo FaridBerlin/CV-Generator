@@ -33,6 +33,13 @@ export interface UiLabels {
   appTitle: string;
   language: string;
   autoFill: string;
+  autoFillTitle: string;
+  autoFillIntro: string;
+  autoFillQuestion: string;
+  autoFillWrong: string;
+  unlock: string;
+  checking: string;
+  cancel: string;
   downloadPdf: string;
   cvColor: string;
   personalInfo: string;
@@ -112,6 +119,14 @@ export const translations: Record<Lang, Translation> = {
       appTitle: 'CV Generator',
       language: 'Language',
       autoFill: 'AutoFill',
+      autoFillTitle: 'Load the sample CV',
+      autoFillIntro:
+        "The sample CV is the author's own. Answer the question to load it, or fill in your own details.",
+      autoFillQuestion: "What is the author's favorite chess opening?",
+      autoFillWrong: 'That is not the right answer.',
+      unlock: 'Load sample',
+      checking: 'Checking…',
+      cancel: 'Cancel',
       downloadPdf: 'Download PDF',
       cvColor: 'CV Color',
       personalInfo: 'Personal Information',
@@ -184,6 +199,14 @@ export const translations: Record<Lang, Translation> = {
       appTitle: 'Lebenslauf-Generator',
       language: 'Sprache',
       autoFill: 'Beispieldaten',
+      autoFillTitle: 'Beispiel-Lebenslauf laden',
+      autoFillIntro:
+        'Der Beispiel-Lebenslauf gehört dem Autor. Beantworte die Frage, um ihn zu laden, oder trage deine eigenen Daten ein.',
+      autoFillQuestion: 'Was ist die Lieblingseröffnung des Autors im Schach?',
+      autoFillWrong: 'Das ist nicht die richtige Antwort.',
+      unlock: 'Beispiel laden',
+      checking: 'Prüfe…',
+      cancel: 'Abbrechen',
       downloadPdf: 'PDF herunterladen',
       cvColor: 'Farbe des Lebenslaufs',
       personalInfo: 'Persönliche Angaben',
