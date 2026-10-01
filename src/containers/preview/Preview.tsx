@@ -14,6 +14,7 @@ import type { CvTheme } from '../../theme/cvThemes';
 import A4Scaler from './A4Scaler';
 import './Preview.css';
 import { getInterestIconKind } from '../../utils/interestIcon';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 const interestIcons = {
   ai: BrainCircuit,
@@ -73,6 +74,7 @@ function Preview({
   languages,
   interests,
 }: PreviewProps) {
+  const { cv } = useTranslation();
   const filledSkills = skills.filter((s) => s.skill);
   const filledLanguages = languages.filter((l) => l.language);
   const filledInterests = interests.filter((i) => i.interest);
@@ -99,13 +101,13 @@ function Preview({
               <h1 className="cv-name">
                 {personalInfo.firstName} {personalInfo.lastName}
               </h1>
-              <p className="cv-title">{personalInfo.title || 'Your Title'}</p>
+              <p className="cv-title">{personalInfo.title || cv.yourTitle}</p>
               <p className="cv-bio">{personalInfo.bio}</p>
             </div>
             {personalInfo.profileImage ? (
               <img src={personalInfo.profileImage} alt="Profile" className="cv-photo" />
             ) : (
-              <div className="cv-photo">Photo</div>
+              <div className="cv-photo">{cv.photo}</div>
             )}
           </div>
           <div className="cv-contact-bar">
@@ -119,19 +121,19 @@ function Preview({
         <div className="cv-body">
           <div className="cv-column">
             <section>
-              <h2 className="cv-section-title">Professional Experience</h2>
+              <h2 className="cv-section-title">{cv.experience}</h2>
               <div className="cv-entry-list">
                 {experience.map((exp) => (
                   <div key={exp.id}>
-                    <h3 className="cv-entry-title">{exp.position || 'Position'}</h3>
-                    <p className="cv-entry-subtitle">{exp.company || 'Company'}</p>
+                    <h3 className="cv-entry-title">{exp.position || cv.position}</h3>
+                    <p className="cv-entry-subtitle">{exp.company || cv.company}</p>
                     <div className="cv-entry-meta-row">
                       <p className="cv-entry-meta">{dateRange(exp.startDate, exp.endDate)}</p>
                       {exp.location && <p className="cv-entry-meta">{exp.location}</p>}
                     </div>
                     {exp.achievements && exp.achievements.length > 0 && (
                       <>
-                        <p className="cv-entry-label">Achievements/Tasks:</p>
+                        <p className="cv-entry-label">{cv.achievements}</p>
                         <BulletList items={exp.achievements} />
                       </>
                     )}
@@ -141,19 +143,19 @@ function Preview({
             </section>
 
             <section>
-              <h2 className="cv-section-title">Education</h2>
+              <h2 className="cv-section-title">{cv.education}</h2>
               <div className="cv-entry-list">
                 {education.map((edu) => (
                   <div key={edu.id}>
-                    <h3 className="cv-entry-title">{edu.degree || 'Degree'}</h3>
-                    <p className="cv-entry-subtitle">{edu.institution || 'Institution'}</p>
+                    <h3 className="cv-entry-title">{edu.degree || cv.degree}</h3>
+                    <p className="cv-entry-subtitle">{edu.institution || cv.institution}</p>
                     <div className="cv-entry-meta-row">
                       <p className="cv-entry-meta">{dateRange(edu.startDate, edu.endDate)}</p>
                       {edu.location && <p className="cv-entry-meta">{edu.location}</p>}
                     </div>
                     {edu.courses && edu.courses.length > 0 && (
                       <>
-                        <p className="cv-entry-label">Courses:</p>
+                        <p className="cv-entry-label">{cv.courses}</p>
                         <BulletList items={edu.courses} />
                       </>
                     )}
@@ -168,7 +170,7 @@ function Preview({
           <div className="cv-column">
             {filledSkills.length > 0 && (
               <section>
-                <h2 className="cv-section-title">Skills</h2>
+                <h2 className="cv-section-title">{cv.skills}</h2>
                 <div className="cv-pill-wrap">
                   {filledSkills.map((skill) => (
                     <span key={skill.id} className="cv-pill">
@@ -180,15 +182,15 @@ function Preview({
             )}
 
             <section>
-              <h2 className="cv-section-title">Personal Projects</h2>
+              <h2 className="cv-section-title">{cv.projects}</h2>
               <div className="cv-entry-list">
                 {projects.map((project) => (
                   <div key={project.id}>
-                    <h3 className="cv-entry-title">{project.name || 'Project Name'}</h3>
+                    <h3 className="cv-entry-title">{project.name || cv.projectName}</h3>
                     <div className="cv-entry-details">
                       {project.stack && (
                         <p className="cv-inline-row">
-                          <b>Stack:</b> {project.stack}
+                          <b>{cv.stack}</b> {project.stack}
                         </p>
                       )}
                       {project.features && project.features.length > 0 && (
@@ -196,17 +198,17 @@ function Preview({
                       )}
                       {project.role && (
                         <p className="cv-inline-row">
-                          <b>Role:</b> {project.role}
+                          <b>{cv.role}</b> {project.role}
                         </p>
                       )}
                       {project.deployment && (
                         <p className="cv-inline-row">
-                          <b>Deployment:</b> {project.deployment}
+                          <b>{cv.deployment}</b> {project.deployment}
                         </p>
                       )}
                       {project.liveUrl && (
                         <p className="cv-inline-row">
-                          <b>Live:</b> {project.liveUrl}
+                          <b>{cv.live}</b> {project.liveUrl}
                         </p>
                       )}
                     </div>
@@ -217,7 +219,7 @@ function Preview({
 
             {filledLanguages.length > 0 && (
               <section>
-                <h2 className="cv-section-title">Languages</h2>
+                <h2 className="cv-section-title">{cv.languages}</h2>
                 <div className="cv-language-grid">
                   {filledLanguages.map((lang) => (
                     <div key={lang.id} className="cv-language-item">
@@ -231,7 +233,7 @@ function Preview({
 
             {filledInterests.length > 0 && (
               <section>
-                <h2 className="cv-section-title">Interests</h2>
+                <h2 className="cv-section-title">{cv.interests}</h2>
                 <div className="cv-pill-wrap">
                   {filledInterests.map((interest) => {
                     const Icon = interestIcons[getInterestIconKind(interest.interest)];

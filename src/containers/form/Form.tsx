@@ -10,8 +10,14 @@ import type {
   MobileState,
 } from '../../types/cv';
 import { cvThemes } from '../../theme/cvThemes';
+import { useTranslation } from '../../i18n/LanguageContext';
+import { LANGS } from '../../i18n/translations';
+import type { Lang } from '../../i18n/translations';
+import LanguageSwitcher from '../../components/LanguageSwitcher/LanguageSwitcher';
 
 interface FormProps {
+  lang: Lang;
+  onLangChange: (lang: Lang) => void;
   themeId: string;
   onThemeChange: (id: string) => void;
   mobile: MobileState;
@@ -54,6 +60,8 @@ interface FormProps {
 }
 
 function Form({
+  lang,
+  onLangChange,
   themeId,
   onThemeChange,
   mobile,
@@ -87,33 +95,37 @@ function Form({
   removeInterest,
   handleInterestChange,
 }: FormProps) {
+  const { ui, cv } = useTranslation();
   return (
     <div className={mobile.formIsOpen ? 'block' : 'hidden lg:block'}>
       <div className="bg-white text-gray-900 [color-scheme:light] rounded-lg shadow-xl ring-1 ring-white/15 p-6 space-y-6">
+        {/* Language */}
+        <LanguageSwitcher lang={lang} langs={LANGS} onChange={onLangChange} label={ui.language} />
+
         {/* Header with Actions */}
-        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
-          <h1 className="text-2xl font-bold text-primary">CV Generator</h1>
+        <div className="flex flex-wrap justify-between items-center gap-3 border-b border-gray-200 pb-4">
+          <h1 className="text-2xl font-bold text-primary">{ui.appTitle}</h1>
           <div className="flex gap-2">
             <button
               onClick={autoFill}
-              className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded hover:bg-accent/90 transition"
+              className="flex items-center gap-2 px-4 py-2 whitespace-nowrap bg-accent text-white rounded hover:bg-accent/90 transition"
             >
               <Sparkles size={16} />
-              <span className="hidden sm:inline">AutoFill</span>
+              <span className="hidden sm:inline">{ui.autoFill}</span>
             </button>
             <button
               onClick={printDocument}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
+              className="flex items-center gap-2 px-4 py-2 whitespace-nowrap bg-primary text-white rounded hover:bg-primary/90 transition"
             >
               <Download size={16} />
-              <span className="hidden sm:inline">Download PDF</span>
+              <span className="hidden sm:inline">{ui.downloadPdf}</span>
             </button>
           </div>
         </div>
 
         {/* CV Color */}
         <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-gray-700">CV Color</h2>
+          <h2 className="text-sm font-semibold text-gray-700">{ui.cvColor}</h2>
           <div className="flex flex-wrap gap-2">
             {cvThemes.map((t) => (
               <button
@@ -137,12 +149,12 @@ function Form({
         {/* Personal Information */}
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2">
-            Personal Information
+            {ui.personalInfo}
           </h2>
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">Profile Image</label>
+            <label className="block text-sm font-semibold text-gray-700">{ui.profileImage}</label>
             <input
               type="file"
               accept="image/*"
@@ -160,7 +172,7 @@ function Form({
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.firstName}</label>
               <input
                 type="text"
                 name="firstName"
@@ -171,7 +183,7 @@ function Form({
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.lastName}</label>
               <input
                 type="text"
                 name="lastName"
@@ -184,7 +196,7 @@ function Form({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Professional Title</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.professionalTitle}</label>
             <input
               type="text"
               name="title"
@@ -196,20 +208,20 @@ function Form({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Bio / Summary</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.bio}</label>
             <textarea
               name="bio"
               value={personalInfo.bio}
               onChange={handlePersonalInfoChange}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-              placeholder="Brief professional summary..."
+              placeholder={ui.bioPlaceholder}
             />
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.email}</label>
               <input
                 type="email"
                 name="email"
@@ -220,7 +232,7 @@ function Form({
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.phone}</label>
               <input
                 type="tel"
                 name="phone"
@@ -234,14 +246,14 @@ function Form({
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.address}</label>
               <input
                 type="text"
                 name="address"
                 value={personalInfo.address}
                 onChange={handlePersonalInfoChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="City, Country"
+                placeholder={ui.addressPlaceholder}
               />
             </div>
             <div>
@@ -262,14 +274,14 @@ function Form({
         <section className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
-              Education
+              {cv.education}
             </h2>
             <button
               onClick={addEducation}
               className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
             >
               <Plus size={16} />
-              Add
+              {ui.add}
             </button>
           </div>
 
@@ -283,30 +295,30 @@ function Form({
               </button>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Degree / Program</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.degreeProgram}</label>
                 <input
                   type="text"
                   value={edu.degree}
                   onChange={(e) => handleEducationChange(edu.id, 'degree', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Full Stack Web Development"
+                  placeholder={ui.degreePlaceholder}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Institution</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{cv.institution}</label>
                 <input
                   type="text"
                   value={edu.institution}
                   onChange={(e) => handleEducationChange(edu.id, 'institution', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="University Name"
+                  placeholder={ui.institutionPlaceholder}
                 />
               </div>
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.startDate}</label>
                   <input
                     type="text"
                     value={edu.startDate}
@@ -316,17 +328,17 @@ function Form({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.endDate}</label>
                   <input
                     type="text"
                     value={edu.endDate}
                     onChange={(e) => handleEducationChange(edu.id, 'endDate', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="Present"
+                    placeholder={ui.endDatePlaceholder}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.location}</label>
                   <input
                     type="text"
                     value={edu.location}
@@ -339,7 +351,7 @@ function Form({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Courses (one per line)
+                  {ui.coursesLabel}
                 </label>
                 <textarea
                   value={edu.courses?.join('\n') || ''}
@@ -352,7 +364,7 @@ function Form({
                   }
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder={'Course 1\nCourse 2\nCourse 3'}
+                  placeholder={ui.coursesPlaceholder}
                 />
               </div>
             </div>
@@ -363,14 +375,14 @@ function Form({
         <section className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
-              Professional Experience
+              {cv.experience}
             </h2>
             <button
               onClick={addExperience}
               className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
             >
               <Plus size={16} />
-              Add
+              {ui.add}
             </button>
           </div>
 
@@ -384,30 +396,30 @@ function Form({
               </button>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Position / Title</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.positionTitle}</label>
                 <input
                   type="text"
                   value={exp.position}
                   onChange={(e) => handleExperienceChange(exp.id, 'position', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Software Developer"
+                  placeholder={ui.positionPlaceholder}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Company</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{cv.company}</label>
                 <input
                   type="text"
                   value={exp.company}
                   onChange={(e) => handleExperienceChange(exp.id, 'company', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Company Name"
+                  placeholder={ui.companyPlaceholder}
                 />
               </div>
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.startDate}</label>
                   <input
                     type="text"
                     value={exp.startDate}
@@ -417,17 +429,17 @@ function Form({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.endDate}</label>
                   <input
                     type="text"
                     value={exp.endDate}
                     onChange={(e) => handleExperienceChange(exp.id, 'endDate', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="Present"
+                    placeholder={ui.endDatePlaceholder}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.location}</label>
                   <input
                     type="text"
                     value={exp.location}
@@ -440,7 +452,7 @@ function Form({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Achievements / Tasks (one per line)
+                  {ui.achievementsLabel}
                 </label>
                 <textarea
                   value={exp.achievements?.join('\n') || ''}
@@ -453,7 +465,7 @@ function Form({
                   }
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder={'Achievement 1\nAchievement 2\nAchievement 3'}
+                  placeholder={ui.achievementsPlaceholder}
                 />
               </div>
             </div>
@@ -464,14 +476,14 @@ function Form({
         <section className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
-              Skills
+              {cv.skills}
             </h2>
             <button
               onClick={addSkill}
               className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
             >
               <Plus size={16} />
-              Add
+              {ui.add}
             </button>
           </div>
 
@@ -497,14 +509,14 @@ function Form({
         <section className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
-              Personal Projects
+              {cv.projects}
             </h2>
             <button
               onClick={addProject}
               className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
             >
               <Plus size={16} />
-              Add
+              {ui.add}
             </button>
           </div>
 
@@ -518,18 +530,18 @@ function Form({
               </button>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Project Name</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{cv.projectName}</label>
                 <input
                   type="text"
                   value={project.name}
                   onChange={(e) => handleProjectChange(project.id, 'name', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Project Name"
+                  placeholder={ui.projectNamePlaceholder}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Tech Stack</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.techStack}</label>
                 <input
                   type="text"
                   value={project.stack}
@@ -541,7 +553,7 @@ function Form({
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Features (one per line)
+                  {ui.featuresLabel}
                 </label>
                 <textarea
                   value={project.features?.join('\n') || ''}
@@ -554,19 +566,19 @@ function Form({
                   }
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder={'Feature 1\nFeature 2\nFeature 3'}
+                  placeholder={ui.featuresPlaceholder}
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Your Role</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.yourRole}</label>
                   <input
                     type="text"
                     value={project.role}
                     onChange={(e) => handleProjectChange(project.id, 'role', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="Full Stack Developer"
+                    placeholder={ui.rolePlaceholder}
                   />
                 </div>
                 <div>
@@ -582,7 +594,7 @@ function Form({
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Live URL</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{ui.liveUrl}</label>
                 <input
                   type="text"
                   value={project.liveUrl}
@@ -599,14 +611,14 @@ function Form({
         <section className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
-              Languages
+              {cv.languages}
             </h2>
             <button
               onClick={addLanguage}
               className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
             >
               <Plus size={16} />
-              Add
+              {ui.add}
             </button>
           </div>
 
@@ -618,7 +630,7 @@ function Form({
                   value={lang.language}
                   onChange={(e) => handleLanguageChange(lang.id, 'language', e.target.value)}
                   className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="English"
+                  placeholder={ui.languagePlaceholder}
                 />
                 <input
                   type="text"
@@ -642,14 +654,14 @@ function Form({
         <section className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary border-b-2 border-accent pb-2 flex-1">
-              Interests
+              {cv.interests}
             </h2>
             <button
               onClick={addInterest}
               className="flex items-center gap-2 px-3 py-1 bg-accent text-white rounded hover:bg-accent/90 transition text-sm"
             >
               <Plus size={16} />
-              Add
+              {ui.add}
             </button>
           </div>
 
@@ -661,7 +673,7 @@ function Form({
                   value={interest.interest}
                   onChange={(e) => handleInterestChange(interest.id, e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Chess"
+                  placeholder={ui.interestPlaceholder}
                 />
                 <button
                   onClick={() => removeInterest(interest.id)}
