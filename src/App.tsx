@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Form from './containers/form/Form';
 import Preview from './containers/preview/Preview';
 import { v4 as uuidv4 } from 'uuid';
 import { getTheme, DEFAULT_THEME_ID, cvThemes } from './theme/cvThemes';
 import MobileToggle from './components/MobileToggle/MobileToggle';
+import { LanguageContext } from './i18n/LanguageContext';
+import { translations, LANGS, DEFAULT_LANG } from './i18n/translations';
+import type { Lang } from './i18n/translations';
+import { getSampleData } from './i18n/sampleData';
 import type {
   PersonalInfo,
   Education,
@@ -68,6 +72,7 @@ const initializeLanguages = (): Language[] => [{ id: uuidv4(), language: '', lev
 const initializeInterests = (): Interest[] => [{ id: uuidv4(), interest: '' }];
 
 const THEME_KEY = 'cv-theme';
+const LANG_KEY = 'cv-lang';
 
 function App() {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(initializePersonalInfo());
@@ -88,6 +93,29 @@ function App() {
     }
   });
   const theme = getTheme(themeId);
+
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      const saved = localStorage.getItem(LANG_KEY);
+      return LANGS.includes(saved as Lang) ? (saved as Lang) : DEFAULT_LANG;
+    } catch {
+      return DEFAULT_LANG;
+    }
+  });
+  const t = translations[lang];
+
+  useEffect(() => {
+    document.documentElement.lang = t.htmlLang;
+  }, [t.htmlLang]);
+
+  const handleLangChange = (next: Lang) => {
+    setLang(next);
+    try {
+      localStorage.setItem(LANG_KEY, next);
+    } catch {
+      // storage unavailable; the language just won't persist
+    }
+  };
 
   const handleThemeChange = (id: string) => {
     setThemeId(id);
@@ -115,13 +143,13 @@ function App() {
 
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      alert('Image is too large. Please use an image smaller than 5MB.');
+      alert(t.ui.imageTooLarge);
       e.target.value = '';
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      alert('Please select a valid image file.');
+      alert(t.ui.invalidImage);
       e.target.value = '';
       return;
     }
@@ -162,7 +190,7 @@ function App() {
       img.src = reader.result as string;
     };
     reader.onerror = () => {
-      alert('Failed to read the image file. Please try again.');
+      alert(t.ui.imageReadFailed);
       e.target.value = '';
     };
     reader.readAsDataURL(file);
@@ -173,7 +201,15 @@ function App() {
     e.preventDefault();
     setEducation((prev) => [
       ...prev,
-      { id: uuidv4(), degree: '', institution: '', startDate: '', endDate: '', location: '', courses: [] },
+      {
+        id: uuidv4(),
+        degree: '',
+        institution: '',
+        startDate: '',
+        endDate: '',
+        location: '',
+        courses: [],
+      },
     ]);
   };
 
@@ -190,7 +226,15 @@ function App() {
     e.preventDefault();
     setExperience((prev) => [
       ...prev,
-      { id: uuidv4(), position: '', company: '', startDate: '', endDate: '', location: '', achievements: [] },
+      {
+        id: uuidv4(),
+        position: '',
+        company: '',
+        startDate: '',
+        endDate: '',
+        location: '',
+        achievements: [],
+      },
     ]);
   };
 
@@ -198,7 +242,11 @@ function App() {
     setExperience((prev) => prev.filter((exp) => exp.id !== id));
   };
 
-  const handleExperienceChange = (id: string, field: keyof Experience, value: string | string[]) => {
+  const handleExperienceChange = (
+    id: string,
+    field: keyof Experience,
+    value: string | string[]
+  ) => {
     setExperience((prev) => prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)));
   };
 
@@ -213,7 +261,9 @@ function App() {
   };
 
   const handleSkillChange = (id: string, value: string) => {
-    setSkills((prev) => prev.map((skill) => (skill.id === id ? { ...skill, skill: value } : skill)));
+    setSkills((prev) =>
+      prev.map((skill) => (skill.id === id ? { ...skill, skill: value } : skill))
+    );
   };
 
   // Projects handlers
@@ -246,7 +296,9 @@ function App() {
   };
 
   const handleLanguageChange = (id: string, field: keyof Language, value: string) => {
-    setLanguages((prev) => prev.map((lang) => (lang.id === id ? { ...lang, [field]: value } : lang)));
+    setLanguages((prev) =>
+      prev.map((lang) => (lang.id === id ? { ...lang, [field]: value } : lang))
+    );
   };
 
   // Interests handlers
@@ -263,183 +315,16 @@ function App() {
     setInterests((prev) => prev.map((int) => (int.id === id ? { ...int, interest: value } : int)));
   };
 
-  // Autofill functionality with sample data
+  // Autofill with sample data in the selected language
   const autoFill = () => {
-    setPersonalInfo({
-      firstName: 'Farid',
-      lastName: 'Hima',
-      title: 'Full Stack Web Developer',
-      bio: 'Fullstack Web Developer with 2+ years of experience in Amazon FBA e-commerce and a completed 1.5-year MERN fullstack program at DCI Berlin (graduated April 2026). Hands-on experience building real-time interaction platforms with Vue 3 and Socket.io. I combine analytical thinking, technical expertise, and a solution-oriented mindset — ready to contribute from day one.',
-      email: '****unterf@gmail.com',
-      phone: '017679******',
-      address: 'Berlin, Germany',
-      github: 'github.com/FaridBerlin',
-      profileImage: null,
-    });
-
-    setEducation([
-      {
-        id: uuidv4(),
-        degree: 'Fullstack Web Development',
-        institution: 'DCI Digital Career Institute GmbH',
-        startDate: '10/2024',
-        endDate: '04/2026',
-        location: 'Berlin',
-        courses: [
-          'Comprehensive MERN Stack training (MongoDB, Express.js, React, Node.js)',
-          'Developed multiple real-world fullstack projects',
-          'English language training (B2 level)',
-          'AI automation and AI agent creation',
-        ],
-      },
-    ]);
-
-    setExperience([
-      {
-        id: uuidv4(),
-        position: 'Fullstack Developer Intern',
-        company: 'Crowds',
-        startDate: '03/2026',
-        endDate: '06/2026',
-        location: 'Berlin',
-        achievements: [
-          'Took ownership of backend development in a team of 3 developers',
-          'Designed and implemented a real-time backend using Node.js, Express, and Socket.io',
-          'Built RESTful APIs, implemented JWT authentication, and defined MongoDB data models',
-          'Ensured seamless integration between frontend and backend systems',
-          'Contributed to frontend development using Vue 3, Pinia, and Vite',
-          'Collaborated in an agile team using Git workflows',
-        ],
-      },
-      {
-        id: uuidv4(),
-        position: 'Amazon FBA Manager',
-        company: 'IIIHT',
-        startDate: '10/2021',
-        endDate: '02/2024',
-        location: 'Berlin',
-        achievements: [
-          'Optimized product listings and advertising campaigns for tech products',
-          'Managed inventory, logistics, and supply chain processes',
-          'Conducted market and competitor analysis to increase sales performance',
-        ],
-      },
-      {
-        id: uuidv4(),
-        position: 'Personal Trainer & Influencer',
-        company: 'Berlin',
-        startDate: '06/2011',
-        endDate: '12/2022',
-        location: 'Berlin',
-        achievements: [
-          'Built YouTube channel (Farid Berlin) to 180,000 subscribers',
-          'Sponsored by Olimp Sport Nutrition (2013–2020)',
-          'Winner of IFBB Fit Model Belgium (2019)',
-        ],
-      },
-    ]);
-
-    setSkills(
-      [
-        'JavaScript',
-        'TypeScript',
-        'Python',
-        'Go',
-        'Kotlin',
-        'PHP',
-        'React',
-        'Vue 3',
-        'Next.js',
-        'Mobile Development',
-        'Android Studio',
-        'IntelliJ IDEA',
-        'Angular',
-        'Astro',
-        'Flask',
-        'Django',
-        'Node.js',
-        'Express.js',
-        'JWT',
-        'Socket.io',
-        'MongoDB',
-        'MySQL',
-        'Docker',
-        'Nginx',
-        'Git',
-        'GitHub',
-        'Linux',
-        'Hetzner VPS',
-        'Postman',
-        'AI Integration',
-        'Ollama',
-        'LLM',
-        'LLM Integration',
-        'n8n',
-        'Zapier',
-        'Tailwind CSS',
-        'MJML',
-        'HTML',
-        'CSS',
-      ].map((skill) => ({ id: uuidv4(), skill }))
-    );
-
-    setProjects([
-      {
-        id: uuidv4(),
-        name: 'NutriVa – AI-Powered Nutrition App',
-        stack: '',
-        features: [
-          'Led a 4-person development team',
-          'Built AI-driven meal planning features',
-          'Implemented tracking and dashboard functionality',
-        ],
-        role: '',
-        deployment: 'Hetzner VPS with Nginx',
-        liveUrl: '',
-      },
-      {
-        id: uuidv4(),
-        name: 'Portfolio Website',
-        stack: 'React, Tailwind CSS, Vite, React Three Fiber',
-        features: ['Integrated 3D elements'],
-        role: '',
-        deployment: 'GitHub Pages',
-        liveUrl: '',
-      },
-      {
-        id: uuidv4(),
-        name: 'Weather App & Weather Flask & Docker',
-        stack: '',
-        features: [
-          'JS/TS version: real-time weather via OpenWeather API',
-          'Python/Flask/Docker version: containerised API integration',
-        ],
-        role: '',
-        deployment: '',
-        liveUrl: '',
-      },
-      {
-        id: uuidv4(),
-        name: 'Space Invader Game',
-        stack: 'Classic arcade game built with JavaScript and Canvas',
-        features: ['Focus on game logic and animation'],
-        role: '',
-        deployment: 'GitHub Pages',
-        liveUrl: '',
-      },
-    ]);
-
-    setLanguages([
-      { id: uuidv4(), language: 'Deutsch', level: 'C2' },
-      { id: uuidv4(), language: 'English', level: 'C1' },
-    ]);
-
-    setInterests([
-      { id: uuidv4(), interest: 'AI Automation' },
-      { id: uuidv4(), interest: 'Game Dev' },
-      { id: uuidv4(), interest: 'Fitness' },
-      { id: uuidv4(), interest: 'Chess' },
-    ]);
+    const data = getSampleData(lang);
+    setPersonalInfo(data.personalInfo);
+    setEducation(data.education);
+    setExperience(data.experience);
+    setSkills(data.skills);
+    setProjects(data.projects);
+    setLanguages(data.languages);
+    setInterests(data.interests);
   };
 
   // Generate and download the CV as a real, text-based PDF
@@ -452,6 +337,7 @@ function App() {
       const doc = (
         <CVDocument
           theme={theme}
+          lang={lang}
           personalInfo={personalInfo}
           education={education}
           experience={experience}
@@ -465,7 +351,9 @@ function App() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      const name = [personalInfo.firstName, personalInfo.lastName].filter(Boolean).join('_') || 'resume';
+      const name =
+        [personalInfo.firstName, personalInfo.lastName].filter(Boolean).join('_') ||
+        t.cv.pdfFallbackName;
       link.download = `${name}.pdf`;
       document.body.appendChild(link);
       link.click();
@@ -473,61 +361,65 @@ function App() {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert(`Failed to generate PDF: ${error instanceof Error ? error.message : String(error)}`);
+      alert(`${t.ui.pdfFailed}: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 [color-scheme:dark]">
-      <div className="max-w-[2200px] mx-auto py-6 px-4 lg:px-6 lg:grid lg:grid-cols-[minmax(360px,1fr)_minmax(400px,1fr)] lg:gap-6">
-        <Form
-          themeId={themeId}
-          onThemeChange={handleThemeChange}
-          printDocument={printDocument}
-          mobile={mobile}
-          autoFill={autoFill}
-          personalInfo={personalInfo}
-          handlePersonalInfoChange={handlePersonalInfoChange}
-          handleImageUpload={handleImageUpload}
-          education={education}
-          addEducation={addEducation}
-          removeEducation={removeEducation}
-          handleEducationChange={handleEducationChange}
-          experience={experience}
-          addExperience={addExperience}
-          removeExperience={removeExperience}
-          handleExperienceChange={handleExperienceChange}
-          skills={skills}
-          addSkill={addSkill}
-          removeSkill={removeSkill}
-          handleSkillChange={handleSkillChange}
-          projects={projects}
-          addProject={addProject}
-          removeProject={removeProject}
-          handleProjectChange={handleProjectChange}
-          languages={languages}
-          addLanguage={addLanguage}
-          removeLanguage={removeLanguage}
-          handleLanguageChange={handleLanguageChange}
-          interests={interests}
-          addInterest={addInterest}
-          removeInterest={removeInterest}
-          handleInterestChange={handleInterestChange}
-        />
-        <Preview
-          theme={theme}
-          mobile={mobile}
-          personalInfo={personalInfo}
-          education={education}
-          experience={experience}
-          skills={skills}
-          projects={projects}
-          languages={languages}
-          interests={interests}
-        />
+    <LanguageContext.Provider value={lang}>
+      <div className="min-h-screen bg-neutral-950 [color-scheme:dark]">
+        <div className="max-w-[2200px] mx-auto py-6 px-4 lg:px-6 lg:grid lg:grid-cols-[minmax(360px,1fr)_minmax(400px,1fr)] lg:gap-6">
+          <Form
+            lang={lang}
+            onLangChange={handleLangChange}
+            themeId={themeId}
+            onThemeChange={handleThemeChange}
+            printDocument={printDocument}
+            mobile={mobile}
+            autoFill={autoFill}
+            personalInfo={personalInfo}
+            handlePersonalInfoChange={handlePersonalInfoChange}
+            handleImageUpload={handleImageUpload}
+            education={education}
+            addEducation={addEducation}
+            removeEducation={removeEducation}
+            handleEducationChange={handleEducationChange}
+            experience={experience}
+            addExperience={addExperience}
+            removeExperience={removeExperience}
+            handleExperienceChange={handleExperienceChange}
+            skills={skills}
+            addSkill={addSkill}
+            removeSkill={removeSkill}
+            handleSkillChange={handleSkillChange}
+            projects={projects}
+            addProject={addProject}
+            removeProject={removeProject}
+            handleProjectChange={handleProjectChange}
+            languages={languages}
+            addLanguage={addLanguage}
+            removeLanguage={removeLanguage}
+            handleLanguageChange={handleLanguageChange}
+            interests={interests}
+            addInterest={addInterest}
+            removeInterest={removeInterest}
+            handleInterestChange={handleInterestChange}
+          />
+          <Preview
+            theme={theme}
+            mobile={mobile}
+            personalInfo={personalInfo}
+            education={education}
+            experience={experience}
+            skills={skills}
+            projects={projects}
+            languages={languages}
+            interests={interests}
+          />
+        </div>
+        <MobileToggle handleToggle={handleToggle} mobile={mobile} />
       </div>
-      <MobileToggle handleToggle={handleToggle} mobile={mobile} />
-    </div>
+    </LanguageContext.Provider>
   );
 }
 
